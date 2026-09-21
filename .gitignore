@@ -1,0 +1,11 @@
+# THIS STUFF IS KEPT OUT OF GITHUB
+node_modules/
+.env
+.DS_Store
+dist/
+.metadata/
+.classpath
+.project
+.settings/
+bin/
+target/

@@ -1,0 +1,13 @@
+//METADATA AND SUPABASE CLIENT DEPENDENCIES
+{
+  "name": "buy-now-cry-later",
+  "version": "1.0.0",
+  "description": "Full-stack stock trading simulator platform",
+  "main": "src/js/app.js",
+  "scripts": {
+    "start": "node src/js/app.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  }
+}
