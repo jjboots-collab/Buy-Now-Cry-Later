@@ -1,12 +1,27 @@
-//AUTHENTICATION
-import { authenticateUser } from '../api/auth.js';
+// authentication in supabase
+import { supabase } from './supabaseClient.js';
 
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
-    const usernameInput = document.getElementById('username').value;
+    
+    const emailInput = document.getElementById('username').value; // Supabase defaults to email for login
     const passwordInput = document.getElementById('password').value;
 
-    authenticateUser(usernameInput, passwordInput);
+    // Direct Supabase Auth call using your anon key
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: emailInput,
+        password: passwordInput,
+    });
+
+    if (error) {
+        console.error('Login error:', error.message);
+        alert(`Login failed: ${error.message}`);
+        return;
+    }
+
+    console.log('Logged in successfully:', data);
+    // Redirect user to dashboard upon success
+    window.location.href = 'dashboard.html';
 }
 
 const loginForm = document.getElementById('loginForm');

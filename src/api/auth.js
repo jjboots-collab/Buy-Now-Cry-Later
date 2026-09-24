@@ -1,21 +1,22 @@
 //AUTHENTICATION FORM SUBMISSION
+// src/api/auth.js
 import { supabase } from '../js/supabaseClient.js';
 
 export async function authenticateUser(username, password) {
-    const response = await supabase
+    const { data, error } = await supabase
         .from('D1_users')
         .select('role')
         .eq('username', username)
         .eq('password_hash', password)
         .single();
 
-    if (response.error) {
-        alert('Authentication failed');
+    if (error) {
+        console.error('Database query error:', error);
+        alert('Authentication failed: Invalid credentials or user not found');
         return;
     }
 
-    const userRole = response.data.role;
-    if (userRole === 'administrator') {
+    if (data && data.role === 'administrator') {
         window.location.href = 'admin.html';
     } else {
         window.location.href = 'dashboard.html';
