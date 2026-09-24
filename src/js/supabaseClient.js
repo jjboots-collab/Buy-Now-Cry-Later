@@ -1,7 +1,6 @@
 //INITIALIZE SUPABASE CONNECTION
-import { createClient } from '@supabase/supabase-js';
+// INITIALIZE SUPABASE CONNECTION
+const supabaseUrl = 'https://ymffltlbfjsudxhfxoue.supabase.co/rest/v1/';
+const supabaseKey = 'sb_publishable_quXXs0juoM6G2G0iJxtJZg_wnMS5cOd';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
