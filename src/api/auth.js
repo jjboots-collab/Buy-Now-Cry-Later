@@ -1,5 +1,4 @@
-//AUTHENTICATION FORM SUBMISSION
-// src/api/auth.js
+// AUTHENTICATION DATABASE QUERY
 import { supabase } from '../js/supabaseClient.js';
 
 export async function authenticateUser(username, password) {

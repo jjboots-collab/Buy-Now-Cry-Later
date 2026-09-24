@@ -4,33 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buy Now, Cry Later - Welcome</title>
+    <title>Buy Now, Cry Later - Login</title>
     <link rel="stylesheet" href="../src/css/main.css">
     
-    <!-- 1. Load Supabase CDN Library -->
+    <!-- Load Supabase CDN Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <header>
-        <h1>Buy Now, Cry Later</h1>
-        <p>Stock Trading Simulator Training Platform</p>
-    </header>
-
     <main>
-        <!-- Entry Portal Navigation -->
-        <section class="portal-container">
-            <!-- User Login Button -->
-            <button id="loginBtn" type="button" onclick="window.location.href='login.html'">
-                User Login
-            </button>
+        <form id="loginForm">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
 
-            <!-- Account Creation Button -->
-            <button id="registerBtn" type="button" onclick="window.location.href='register.html'">
-                Account Creation
-            </button>
-        </section>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Log In</button>
+        </form>
     </main>
 
+    <!-- Load Module Script -->
     <script type="module" src="../src/js/auth.js"></script>
 </body>
 </html>
