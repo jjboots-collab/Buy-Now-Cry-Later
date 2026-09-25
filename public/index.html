@@ -1,29 +1,60 @@
-<!-- LANDING PAGE - LOGIN -->
+<!-- LANDING PAGE - LOGIN & REGISTRATION -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buy Now, Cry Later - Login</title>
+    <title>Buy Now, Cry Later - Login & Register</title>
     <link rel="stylesheet" href="../src/css/main.css">
-    
-    <!-- Load Supabase CDN Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+    <header>
+        <h1>Buy Now, Cry Later</h1>
+        <p>Stock Trading & Portfolio Management Platform</p>
+    </header>
+
     <main>
-        <form id="loginForm">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+        <!-- Login Form -->
+        <section class="auth-section">
+            <h2>Log In</h2>
+            <form id="loginForm">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter username" required>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter password" required>
 
-            <button type="submit">Log In</button>
-        </form>
+                <button type="submit">Log In</button>
+            </form>
+        </section>
+
+        <hr>
+
+        <!-- User Account Creation Form -->
+        <section class="auth-section">
+            <h2>Create an Account</h2>
+            <form id="registerForm">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" placeholder="John Doe" required>
+
+                <label for="regUsername">Username</label>
+                <input type="text" id="username" name="username" placeholder="johndoe" required>
+
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="john@example.com" required>
+
+                <label for="regPassword">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+
+                <button type="submit">Create Account</button>
+            </form>
+        </section>
     </main>
 
-    <!-- Load Module Script -->
-    <script type="module" src="../src/js/auth.js"></script>
+    <!-- 1. Load Supabase CDN Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Load Single Application JS -->
+    <script src="../src/js/app.js"></script>
 </body>
 </html>

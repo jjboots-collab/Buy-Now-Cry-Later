@@ -3,13 +3,117 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - Buy Now, Cry Later</title>
     <link rel="stylesheet" href="../src/css/main.css">
 </head>
 <body>
-    <h1>Customer Dashboard</h1>
-    <div id="cashDisplay">Cash Balance: $0.00</div>
-    <div id="stockList"></div>
-    <script type="module" src="../src/js/market.js"></script>
+    <header>
+        <h1>Customer Dashboard</h1>
+        <h2>Cash Balance: <span id="userCashDisplay">$0.00</span></h2>
+    </header>
+
+    <main>
+        <!-- Deposit or Withdraw Cash -->
+        <section class="dashboard-section">
+            <h3>Manage Cash Account</h3>
+            <form id="cashForm">
+                <label for="cashAction">Action:</label>
+                <select id="cashAction" name="cashAction" required>
+                    <option value="DEPOSIT">Deposit</option>
+                    <option value="WITHDRAW">Withdraw</option>
+                </select>
+
+                <label for="cashAmount">Amount ($):</label>
+                <input type="number" id="cashAmount" name="cashAmount" step="0.01" min="0.01" placeholder="e.g., 500.00" required>
+
+                <button type="submit">Execute Cash Action</button>
+            </form>
+        </section>
+
+        <hr>
+
+        <!-- Buy Stock -->
+        <section class="dashboard-section">
+            <h3>Buy Stock</h3>
+            <form id="buyStockForm">
+                <label for="buyTicker">Stock Ticker:</label>
+                <input type="text" id="buyTicker" name="buyTicker" placeholder="e.g., AAPL" required>
+
+                <label for="buyQuantity">Quantity:</label>
+                <input type="number" id="buyQuantity" name="buyQuantity" min="1" placeholder="e.g., 10" required>
+
+                <button type="submit">Buy Shares</button>
+            </form>
+        </section>
+
+        <hr>
+
+        <!-- Sell Stock -->
+        <section class="dashboard-section">
+            <h3>Sell Stock</h3>
+            <form id="sellStockForm">
+                <label for="sellTicker">Stock Ticker:</label>
+                <input type="text" id="sellTicker" name="sellTicker" placeholder="e.g., AAPL" required>
+
+                <label for="sellQuantity">Quantity:</label>
+                <input type="number" id="sellQuantity" name="sellQuantity" min="1" placeholder="e.g., 5" required>
+
+                <button type="submit">Sell Shares</button>
+            </form>
+        </section>
+
+        <hr>
+
+        <!-- Portfolio Overview -->
+        <section class="dashboard-section">
+            <h3>Your Portfolio</h3>
+            <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>Company Name</th>
+                        <th>Ticker</th>
+                        <th>Current Price</th>
+                        <th>Available Volume</th>
+                        <th>Market Value</th>
+                        <th>Daily High</th>
+                        <th>Daily Low</th>
+                        <th>Owned Shares</th>
+                    </tr>
+                </thead>
+                <tbody id="portfolioTable">
+                    <!-- Dynamic Rows Rendered by app.js -->
+                </tbody>
+            </table>
+        </section>
+
+        <hr>
+
+        <!-- Transaction History -->
+        <section class="dashboard-section">
+            <h3>Transaction History</h3>
+            <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Type</th>
+                        <th>Company Name</th>
+                        <th>Volume</th>
+                        <th>Price/Share</th>
+                        <th>Cash Change</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTable">
+                    <!-- Dynamic Rows Rendered by app.js -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- 1. Supabase CDN Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Single Application Logic File -->
+    <script src="../src/js/app.js"></script>
 </body>
 </html>
