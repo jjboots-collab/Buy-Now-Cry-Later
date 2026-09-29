@@ -1,56 +1,191 @@
-// Inside initAccountAuth() in app.js
+// INITIALIZE SUPABASE CLIENT
+const supabaseUrl = 'https://ymffltlbfjsudxhfxoue.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InltZmZsdGxiZmpzdWR4aGZ4b3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyMDUxMDgsImV4cCI6MjEwNTc4MTEwOH0.kaO3iMilmJLbQsmAr85y83YxpqSIcO0rQgXmFRQstg';
 
-const registerForm = document.getElementById('registerForm');
-if (registerForm) {
-    registerForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Stop native HTML form GET submission
+// Safely access Supabase client
+const supabase = (window.supabase && window.supabase.createClient) 
+    ? window.supabase.createClient(supabaseUrl, supabaseKey)
+    : null;
 
-        if (!supabase) {
-            alert('Database connection not available.');
-            return;
-        }
+if (!supabase) {
+    console.error('Supabase library failed to load. Check script CDN order.');
+}
 
-        try {
-            const fullName = document.getElementById('fullName').value.trim();
-            // FIXED: Target regUsername and regPassword
-            const username = document.getElementById('regUsername').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('regPassword').value;
-            
-            const { data: existingUser, error: checkError } = await supabase
-                .from('users')
-                .select('username')
-                .eq('username', username)
-                .maybeSingle();
+// Get active user from session
+function getActiveUser() {
+    try {
+        return JSON.parse(localStorage.getItem('activeUser'));
+    } catch (e) {
+        return null;
+    }
+}
 
-            if (checkError) throw checkError;
+// CREATE USER ACCOUNT AND AUTHENTICATION
+function initAccountAuth() {
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Stop native HTML form GET submission
 
-            if (existingUser) {
-                alert('Account creation blocked: Username is already taken.');
+            if (!supabase) {
+                alert('Database connection not available.');
                 return;
             }
 
-            // Create account
-            const { error: insertError } = await supabase.from('users').insert([
-                {
-                    full_name: fullName,
-                    username: username,
-                    email: email,
-                    password_hash: password,
-                    role: 'customer',
-                    cash_balance: 0.00
-                }
-            ]);
+            try {
+                const fullName = document.getElementById('fullName').value.trim();
+                // Targets the updated unique ID for registration inputs
+                const username = document.getElementById('regUsername').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('regPassword').value;
+                
+                // Use maybeSingle() to prevent PGRST116 errors when username is not found
+                const { data: existingUser, error: checkError } = await supabase
+                    .from('users')
+                    .select('username')
+                    .eq('username', username)
+                    .maybeSingle();
 
-            if (insertError) {
-                alert(`Error creating account: ${insertError.message}`);
-            } else {
-                alert('Account created successfully! You can now log in.');
-                window.location.href = 'index.html';
+                if (checkError) throw checkError;
+
+                if (existingUser) {
+                    alert('Account creation blocked: Username is already taken.');
+                    return;
+                }
+
+                // Create account
+                const { error: insertError } = await supabase.from('users').insert([
+                    {
+                        full_name: fullName,
+                        username: username,
+                        email: email,
+                        password_hash: password,
+                        role: 'customer',
+                        cash_balance: 0.00
+                    }
+                ]);
+
+                if (insertError) {
+                    alert(`Error creating account: ${insertError.message}`);
+                } else {
+                    alert('Account created successfully! You can now log in.');
+                    window.location.href = 'index.html';
+                }
+            } catch (err) {
+                console.error('Registration Error:', err);
+                alert(`Registration failed: ${err.message || 'Unknown error'}`);
             }
-        } catch (err) {
-            console.error('Registration Error:', err);
-            alert(`Registration failed: ${err.message || 'Unknown error'}`);
-        }
-    });
+        });
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!supabase) {
+                alert('Database connection not available.');
+                return;
+            }
+
+            try {
+                const usernameInput = document.getElementById('username').value.trim();
+                const passwordInput = document.getElementById('password').value;
+
+                // Use maybeSingle() to handle missing credentials gracefully
+                const { data: user, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('username', usernameInput)
+                    .eq('password_hash', passwordInput)
+                    .maybeSingle();
+
+                if (error || !user) {
+                    alert('Authentication failed: Invalid username or password.');
+                    return;
+                }
+
+                // Store active session
+                localStorage.setItem('activeUser', JSON.stringify(user));
+
+                // Route based on role
+                if (user.role === 'administrator') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (err) {
+                console.error('Login Error:', err);
+                alert('An error occurred during login.');
+            }
+        });
+    }
 }
+
+// CREATE STOCK (ADMIN)
+function initAdminStockCreation() {
+    const createStockForm = document.getElementById('createStockForm');
+    if (createStockForm) {
+        createStockForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!supabase) {
+                alert('Database connection not available.');
+                return;
+            }
+
+            try {
+                const currentUser = getActiveUser();
+                if (!currentUser || currentUser.role !== 'administrator') {
+                    alert('Administrator authentication required.');
+                    return;
+                }
+
+                const companyName = document.getElementById('companyName').value.trim();
+                const ticker = document.getElementById('stockTicker').value.trim().toUpperCase();
+                const volume = parseInt(document.getElementById('stockVolume').value, 10);
+                const price = parseFloat(document.getElementById('initialPrice').value);
+
+                // Check for existing company name or ticker
+                const { data: existingStock, error: searchError } = await supabase
+                    .from('stocks')
+                    .select('company_name, ticker')
+                    .or(`company_name.eq.${companyName},ticker.eq.${ticker}`);
+
+                if (searchError) throw searchError;
+
+                if (existingStock && existingStock.length > 0) {
+                    alert('Stock creation blocked: Company name or ticker already exists.');
+                    return;
+                }
+
+                const { error: insertError } = await supabase.from('stocks').insert([
+                    {
+                        company_name: companyName,
+                        ticker: ticker,
+                        volume: volume,
+                        current_price: price,
+                        daily_high: price,
+                        daily_low: price
+                    }
+                ]);
+
+                if (insertError) {
+                    alert(`Error creating stock: ${insertError.message}`);
+                } else {
+                    alert(`Stock ${ticker} created successfully!`);
+                    createStockForm.reset();
+                }
+            } catch (err) {
+                console.error('Stock Creation Error:', err);
+                alert(`Error creating stock: ${err.message || 'Unknown error'}`);
+            }
+        });
+    }
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    initAccountAuth();
+    initAdminStockCreation();
+});
