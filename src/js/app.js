@@ -8,20 +8,22 @@ const supabase = (window.supabase && window.supabase.createClient)
     : null;
 
 if (!supabase) {
-    console.error('Supabase library failed to load. Check script CDN order.');
+    console.error('Supabase library failed to load. Check script CDN order in HTML.');
 }
 
-// Global Event Listeners
+// Global Event Listener (Single Entry Point)
 document.addEventListener('DOMContentLoaded', () => {
     initAccountAuth();
     initAdminStockCreation();
-    initAdminMarketSettings();
-    initCashAccount();
-    initBuyStock();
-    initSellStock();
-    renderPortfolio();
-    renderTransactionHistory();
-    startRNGPriceGenerator();
+
+    // Helper safeguards for dashboard/admin-specific pages
+    if (typeof initAdminMarketSettings === 'function') initAdminMarketSettings();
+    if (typeof initCashAccount === 'function') initCashAccount();
+    if (typeof initBuyStock === 'function') initBuyStock();
+    if (typeof initSellStock === 'function') initSellStock();
+    if (typeof renderPortfolio === 'function') renderPortfolio();
+    if (typeof renderTransactionHistory === 'function') renderTransactionHistory();
+    if (typeof startRNGPriceGenerator === 'function') startRNGPriceGenerator();
 });
 
 // Get active user from session
@@ -47,7 +49,6 @@ function initAccountAuth() {
 
             try {
                 const fullName = document.getElementById('fullName').value.trim();
-                // Targets the updated unique ID for registration inputs
                 const username = document.getElementById('regUsername').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('regPassword').value;
@@ -196,9 +197,3 @@ function initAdminStockCreation() {
         });
     }
 }
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    initAccountAuth();
-    initAdminStockCreation();
-});
