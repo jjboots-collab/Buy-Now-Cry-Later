@@ -2,7 +2,7 @@
 const supabaseUrl = 'https://ymffltlbfjsudxhfxoue.supabase.co';
 const supabaseKey = 'sb_publishable_quXXs0juoM6G2G0iJxtJZg_wnMS5cOd';
 
-// Use a unique variable name to prevent conflict with window.supabase
+// Use a unique variable name (supabaseClient) to prevent conflict with the window.supabase CDN object
 const supabaseClient = (window.supabase && window.supabase.createClient) 
     ? window.supabase.createClient(supabaseUrl, supabaseKey)
     : null;
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAccountAuth();
     initAdminStockCreation();
 
-    // Helper safeguards for dashboard/admin-specific pages
+    // Page-specific safeguards
     if (typeof initAdminMarketSettings === 'function') initAdminMarketSettings();
     if (typeof initCashAccount === 'function') initCashAccount();
     if (typeof initBuyStock === 'function') initBuyStock();
@@ -42,7 +42,7 @@ function initAccountAuth() {
         registerForm.addEventListener('submit', async (event) => {
             event.preventDefault(); // Stop native HTML form GET submission
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 alert('Database connection not available.');
                 return;
             }
@@ -54,7 +54,7 @@ function initAccountAuth() {
                 const password = document.getElementById('regPassword').value;
                 
                 // Use maybeSingle() to prevent PGRST116 errors when username is not found
-                const { data: existingUser, error: checkError } = await supabase
+                const { data: existingUser, error: checkError } = await supabaseClient
                     .from('users')
                     .select('username')
                     .eq('username', username)
@@ -68,7 +68,7 @@ function initAccountAuth() {
                 }
 
                 // Create account
-                const { error: insertError } = await supabase.from('users').insert([
+                const { error: insertError } = await supabaseClient.from('users').insert([
                     {
                         full_name: fullName,
                         username: username,
@@ -97,7 +97,7 @@ function initAccountAuth() {
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 alert('Database connection not available.');
                 return;
             }
@@ -107,7 +107,7 @@ function initAccountAuth() {
                 const passwordInput = document.getElementById('password').value;
 
                 // Use maybeSingle() to handle missing credentials gracefully
-                const { data: user, error } = await supabase
+                const { data: user, error } = await supabaseClient
                     .from('users')
                     .select('*')
                     .eq('username', usernameInput)
@@ -143,7 +143,7 @@ function initAdminStockCreation() {
         createStockForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            if (!supabase) {
+            if (!supabaseClient) {
                 alert('Database connection not available.');
                 return;
             }
@@ -161,7 +161,7 @@ function initAdminStockCreation() {
                 const price = parseFloat(document.getElementById('initialPrice').value);
 
                 // Check for existing company name or ticker
-                const { data: existingStock, error: searchError } = await supabase
+                const { data: existingStock, error: searchError } = await supabaseClient
                     .from('stocks')
                     .select('company_name, ticker')
                     .or(`company_name.eq.${companyName},ticker.eq.${ticker}`);
@@ -173,7 +173,7 @@ function initAdminStockCreation() {
                     return;
                 }
 
-                const { error: insertError } = await supabase.from('stocks').insert([
+                const { error: insertError } = await supabaseClient.from('stocks').insert([
                     {
                         company_name: companyName,
                         ticker: ticker,
