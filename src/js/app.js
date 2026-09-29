@@ -2,12 +2,12 @@
 const supabaseUrl = 'https://ymffltlbfjsudxhfxoue.supabase.co';
 const supabaseKey = 'sb_publishable_quXXs0juoM6G2G0iJxtJZg_wnMS5cOd';
 
-// Safely access Supabase client
-const supabase = (window.supabase && window.supabase.createClient) 
+// Use a unique variable name to prevent conflict with window.supabase
+const supabaseClient = (window.supabase && window.supabase.createClient) 
     ? window.supabase.createClient(supabaseUrl, supabaseKey)
     : null;
 
-if (!supabase) {
+if (!supabaseClient) {
     console.error('Supabase library failed to load. Check script CDN order in HTML.');
 }
 
