@@ -11,6 +11,19 @@ if (!supabase) {
     console.error('Supabase library failed to load. Check script CDN order.');
 }
 
+// Global Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    initAccountAuth();
+    initAdminStockCreation();
+    initAdminMarketSettings();
+    initCashAccount();
+    initBuyStock();
+    initSellStock();
+    renderPortfolio();
+    renderTransactionHistory();
+    startRNGPriceGenerator();
+});
+
 // Get active user from session
 function getActiveUser() {
     try {
