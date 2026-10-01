@@ -5,7 +5,7 @@ const supabaseClient = (window.supabase && window.supabase.createClient)
     ? window.supabase.createClient(supabaseUrl, supabaseKey)
     : null;
 
-// INITIALIZE FUNCTIONS
+// INITIALIZE FUNCTIONS AFTER DOM
 document.addEventListener('DOMContentLoaded', () => {
     accountAuth();
     createStock();
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     RNG();
 });
 
-// Get active user
+// GET CURRENT USER
 function activeUser() {
     try {
         return JSON.parse(localStorage.getItem('activeUser'));
@@ -31,7 +31,8 @@ function activeUser() {
 // USER ACCOUNT CREATION
 async function createUserAccount(event) {
     event.preventDefault();
-
+	
+	// Check connection to the DB.
     if (!supabaseClient) {
         alert('Database connection not available.');
         return;
@@ -50,9 +51,11 @@ async function createUserAccount(event) {
             .select('username')
             .eq('username', username)
             .maybeSingle();
-
+		
+		// Throw error if DB has issues.
         if (checkError) throw checkError;
-
+		
+		// If username is already used, display message to try again.
         if (existingUser) {
             alert('Username is unavailable, please use another.');
             return;
@@ -80,7 +83,8 @@ async function createUserAccount(event) {
             window.location.href = 'index.html';
         }
     } 
-    catch (err) {
+	// Catch block for unknown errors.
+	catch (err) {
         console.error('Registration Error:', err);
         alert(`Registration failed: ${err.message || 'Unknown error'}`);
     }
@@ -89,7 +93,8 @@ async function createUserAccount(event) {
 // USER LOGIN
 async function accountLogin(event) {
     event.preventDefault();
-
+	
+	// Check connection to the DB.
     if (!supabaseClient) {
         alert('Database connection not available.');
         return;
@@ -117,7 +122,7 @@ async function accountLogin(event) {
         // Store active user.
         localStorage.setItem('activeUser', JSON.stringify(user));
 
-        // Send to appropriate dashboard.
+        // If block to send to appropriate dashboard.
         if (user.role === 'administrator') {
             window.location.href = 'admin.html';
         } 
@@ -125,13 +130,14 @@ async function accountLogin(event) {
             window.location.href = 'dashboard.html';
         }
     } 
-    catch (err) {
+	// Catch block for unknown errors.
+	catch (err) {
         console.error('Login Error:', err);
         alert('An error occurred during login.');
     }
 }
 
-// ACCOUNT AUTHENTICATION SETUP
+// ACCOUNT AUTHENTICATION
 function accountAuth() {
     document.getElementById('registerForm')?.addEventListener('submit', createUserAccount);
     document.getElementById('loginForm')?.addEventListener('submit', accountLogin);
@@ -141,19 +147,23 @@ function accountAuth() {
 function createStock() {
     document.getElementById('createStockForm')?.addEventListener('submit', async (event) => {
         event.preventDefault();
-
+		
+		// Check connection to the DB.
         if (!supabaseClient) {
             alert('Database connection not available.');
             return;
         }
-
+		
+		// Verify it is an admin creating the stock.
         try {
             const currentUser = activeUser();
-            if (!currentUser || currentUser.role !== 'administrator') {
+            // If not an admin role, display message.
+			if (!currentUser || currentUser.role !== 'administrator') {
                 alert('Administrator authentication required.');
                 return;
             }
-
+			
+			// Get stock info from the form.
             const companyName = document.getElementById('companyName').value.trim();
             const ticker = document.getElementById('stockTicker').value.trim().toUpperCase();
             const volume = parseInt(document.getElementById('stockVolume').value, 10);
@@ -164,14 +174,17 @@ function createStock() {
                 .from('stocks')
                 .select('company_name, ticker')
                 .or(`company_name.eq.${companyName},ticker.eq.${ticker}`);
-
+			
+			// If the DB action results in an error, throw error.
             if (searchError) throw searchError;
-
+			
+			// If the stock already exists dosplay message.
             if (existingStock && existingStock.length > 0) {
-                alert('Stock creation blocked: Company name or ticker already exists.');
+                alert('Stock Company name or ticker already exists.');
                 return;
             }
-
+			
+			// Create stock in DB, if an error is returned store it.
             const { error: insertError } = await supabaseClient.from('stocks').insert([
                 {
                     company_name: companyName,
@@ -182,15 +195,18 @@ function createStock() {
                     daily_low: price
                 }
             ]);
-
+			
+			// If there is an error from the DB display error.
             if (insertError) {
                 alert(`Error creating stock: ${insertError.message}`);
             } 
+			// If no error from the DB, stock created message
             else {
                 alert(`Stock ${ticker} created successfully!`);
                 document.getElementById('createStockForm').reset();
             }
-        } 
+        }
+		// Catch block for unknown errors.
         catch (err) {
             console.error('Stock Creation Error:', err);
             alert(`Error creating stock: ${err.message || 'Unknown error'}`);
