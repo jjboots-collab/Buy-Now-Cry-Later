@@ -200,35 +200,35 @@ function createStock() {
 
 // MARKET SETTING PLACEHOLDER
 function marketSetting() {
-    // TODO: Implement market settings logic
+    // TODO
 }
 
 // CASH ACCOUNT PLACEHOLDER
 function cashAccount() {
-    // TODO: Implement cash account management
+    // TODO
 }
 
 // BUY STOCK PLACEHOLDER
 function buyStock() {
-    // TODO: Implement buy stock logic
+    // TODO
 }
 
 // SELL STOCK PLACEHOLDER
 function sellStock() {
-    // TODO: Implement sell stock logic
+    // TODO
 }
 
 // PORTFOLIO PLACEHOLDER
 function portfolio() {
-    // TODO: Implement user portfolio rendering
+    // TODO
 }
 
 // TRANSACTION HISTORY PLACEHOLDER
 function transactionHistory() {
-    // TODO: Implement transaction history log
+    // TODO
 }
 
 // RANDOM NUMBER GENERATOR
 function RNG() {
-    // TODO: Implement stock price fluctuation logic
+    // TODO
 }
