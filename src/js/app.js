@@ -31,7 +31,7 @@ function getActiveUser() {
     try {
         return JSON.parse(localStorage.getItem('activeUser'));
     } catch (e) {
-        return null;
+        return null;user
     }
 }
 
