@@ -1,199 +1,234 @@
 // INITIALIZE SUPABASE CLIENT
 const supabaseUrl = 'https://ymffltlbfjsudxhfxoue.supabase.co';
 const supabaseKey = 'sb_publishable_quXXs0juoM6G2G0iJxtJZg_wnMS5cOd';
-
-// Use a unique variable name (supabaseClient) to prevent conflict with the window.supabase CDN object
 const supabaseClient = (window.supabase && window.supabase.createClient) 
     ? window.supabase.createClient(supabaseUrl, supabaseKey)
     : null;
 
-if (!supabaseClient) {
-    console.error('Supabase library failed to load. Check script CDN order in HTML.');
-}
-
-// Global Event Listener (Single Entry Point)
+// INITIALIZE FUNCTIONS
 document.addEventListener('DOMContentLoaded', () => {
-    initAccountAuth();
-    initAdminStockCreation();
-
-    // Page-specific safeguards
-    if (typeof initAdminMarketSettings === 'function') initAdminMarketSettings();
-    if (typeof initCashAccount === 'function') initCashAccount();
-    if (typeof initBuyStock === 'function') initBuyStock();
-    if (typeof initSellStock === 'function') initSellStock();
-    if (typeof renderPortfolio === 'function') renderPortfolio();
-    if (typeof renderTransactionHistory === 'function') renderTransactionHistory();
-    if (typeof startRNGPriceGenerator === 'function') startRNGPriceGenerator();
+    accountAuth();
+    createStock();
+    marketSetting();
+    cashAccount();
+    buyStock();
+    sellStock();
+    portfolio();
+    transactionHistory();
+    RNG();
 });
 
-// Get active user from session
-function getActiveUser() {
+// Get active user
+function activeUser() {
     try {
         return JSON.parse(localStorage.getItem('activeUser'));
-    } catch (e) {
+    } 
+    catch (e) {
         return null;
     }
 }
 
-// CREATE USER ACCOUNT AND AUTHENTICATION
-function initAccountAuth() {
-    const registerForm = document.getElementById('registerForm');
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Stop native HTML form GET submission
+// USER ACCOUNT CREATION
+async function createUserAccount(event) {
+    event.preventDefault();
 
-            if (!supabaseClient) {
-                alert('Database connection not available.');
-                return;
-            }
-
-            try {
-                const fullName = document.getElementById('fullName').value.trim();
-                const username = document.getElementById('regUsername').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('regPassword').value;
-                
-                // Use maybeSingle() to prevent PGRST116 errors when username is not found
-                const { data: existingUser, error: checkError } = await supabaseClient
-                    .from('users')
-                    .select('username')
-                    .eq('username', username)
-                    .maybeSingle();
-
-                if (checkError) throw checkError;
-
-                if (existingUser) {
-                    alert('Account creation blocked: Username is already taken.');
-                    return;
-                }
-
-                // Create account
-                const { error: insertError } = await supabaseClient.from('users').insert([
-                    {
-                        full_name: fullName,
-                        username: username,
-                        email: email,
-                        password_hash: password,
-                        role: 'customer',
-                        cash_balance: 0.00
-                    }
-                ]);
-
-                if (insertError) {
-                    alert(`Error creating account: ${insertError.message}`);
-                } else {
-                    alert('Account created successfully! You can now log in.');
-                    window.location.href = 'index.html';
-                }
-            } catch (err) {
-                console.error('Registration Error:', err);
-                alert(`Registration failed: ${err.message || 'Unknown error'}`);
-            }
-        });
+    if (!supabaseClient) {
+        alert('Database connection not available.');
+        return;
     }
 
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
+    // Get information from the form.
+    try {
+        const fullName = document.getElementById('fullName').value.trim();
+        const username = document.getElementById('regUsername').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('regPassword').value;
 
-            if (!supabaseClient) {
-                alert('Database connection not available.');
-                return;
+        // Check that username is not already used.
+        const { data: existingUser, error: checkError } = await supabaseClient
+            .from('users')
+            .select('username')
+            .eq('username', username)
+            .maybeSingle();
+
+        if (checkError) throw checkError;
+
+        if (existingUser) {
+            alert('Username is unavailable, please use another.');
+            return;
+        }
+
+        // Create the account in the DB.
+        const { error: insertError } = await supabaseClient.from('users').insert([
+            {
+                full_name: fullName,
+                username: username,
+                email: email,
+                password_hash: password,
+                role: 'customer',
+                cash_balance: 0.00
             }
+        ]);
 
-            try {
-                const usernameInput = document.getElementById('username').value.trim();
-                const passwordInput = document.getElementById('password').value;
-
-                // Use maybeSingle() to handle missing credentials gracefully
-                const { data: user, error } = await supabaseClient
-                    .from('users')
-                    .select('*')
-                    .eq('username', usernameInput)
-                    .eq('password_hash', passwordInput)
-                    .maybeSingle();
-
-                if (error || !user) {
-                    alert('Authentication failed: Invalid username or password.');
-                    return;
-                }
-
-                // Store active session
-                localStorage.setItem('activeUser', JSON.stringify(user));
-
-                // Route based on role
-                if (user.role === 'administrator') {
-                    window.location.href = 'admin.html';
-                } else {
-                    window.location.href = 'dashboard.html';
-                }
-            } catch (err) {
-                console.error('Login Error:', err);
-                alert('An error occurred during login.');
-            }
-        });
+        // Show error if account creation fails.
+        if (insertError) {
+            alert(`Error creating account: ${insertError.message}`);
+        } 
+        else {
+            // Message to confirm account creation and prompt login.
+            alert('Account created successfully! Please log in!');
+            window.location.href = 'index.html';
+        }
+    } 
+    catch (err) {
+        console.error('Registration Error:', err);
+        alert(`Registration failed: ${err.message || 'Unknown error'}`);
     }
 }
 
-// CREATE STOCK (ADMIN)
-function initAdminStockCreation() {
-    const createStockForm = document.getElementById('createStockForm');
-    if (createStockForm) {
-        createStockForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
+// USER LOGIN
+async function accountLogin(event) {
+    event.preventDefault();
 
-            if (!supabaseClient) {
-                alert('Database connection not available.');
+    if (!supabaseClient) {
+        alert('Database connection not available.');
+        return;
+    }
+
+    // Read login name and password.
+    try {
+        const usernameInput = document.getElementById('username').value.trim();
+        const passwordInput = document.getElementById('password').value;
+
+        // Pull authentication info from the DB.
+        const { data: user, error } = await supabaseClient
+            .from('users')
+            .select('*')
+            .eq('username', usernameInput)
+            .eq('password_hash', passwordInput)
+            .maybeSingle();
+
+        // If the information does not match throw error.
+        if (error || !user) {
+            alert('Authentication failed: Invalid username or password.');
+            return;
+        }
+
+        // Store active user.
+        localStorage.setItem('activeUser', JSON.stringify(user));
+
+        // Send to appropriate dashboard.
+        if (user.role === 'administrator') {
+            window.location.href = 'admin.html';
+        } 
+        else {
+            window.location.href = 'dashboard.html';
+        }
+    } 
+    catch (err) {
+        console.error('Login Error:', err);
+        alert('An error occurred during login.');
+    }
+}
+
+// ACCOUNT AUTHENTICATION SETUP
+function accountAuth() {
+    document.getElementById('registerForm')?.addEventListener('submit', createUserAccount);
+    document.getElementById('loginForm')?.addEventListener('submit', accountLogin);
+}
+
+// CREATE STOCK (ADMIN)
+function createStock() {
+    document.getElementById('createStockForm')?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        if (!supabaseClient) {
+            alert('Database connection not available.');
+            return;
+        }
+
+        try {
+            const currentUser = activeUser();
+            if (!currentUser || currentUser.role !== 'administrator') {
+                alert('Administrator authentication required.');
                 return;
             }
 
-            try {
-                const currentUser = getActiveUser();
-                if (!currentUser || currentUser.role !== 'administrator') {
-                    alert('Administrator authentication required.');
-                    return;
-                }
+            const companyName = document.getElementById('companyName').value.trim();
+            const ticker = document.getElementById('stockTicker').value.trim().toUpperCase();
+            const volume = parseInt(document.getElementById('stockVolume').value, 10);
+            const price = parseFloat(document.getElementById('initialPrice').value);
 
-                const companyName = document.getElementById('companyName').value.trim();
-                const ticker = document.getElementById('stockTicker').value.trim().toUpperCase();
-                const volume = parseInt(document.getElementById('stockVolume').value, 10);
-                const price = parseFloat(document.getElementById('initialPrice').value);
+            // Check for existing company name or ticker
+            const { data: existingStock, error: searchError } = await supabaseClient
+                .from('stocks')
+                .select('company_name, ticker')
+                .or(`company_name.eq.${companyName},ticker.eq.${ticker}`);
 
-                // Check for existing company name or ticker
-                const { data: existingStock, error: searchError } = await supabaseClient
-                    .from('stocks')
-                    .select('company_name, ticker')
-                    .or(`company_name.eq.${companyName},ticker.eq.${ticker}`);
+            if (searchError) throw searchError;
 
-                if (searchError) throw searchError;
-
-                if (existingStock && existingStock.length > 0) {
-                    alert('Stock creation blocked: Company name or ticker already exists.');
-                    return;
-                }
-
-                const { error: insertError } = await supabaseClient.from('stocks').insert([
-                    {
-                        company_name: companyName,
-                        ticker: ticker,
-                        volume: volume,
-                        current_price: price,
-                        daily_high: price,
-                        daily_low: price
-                    }
-                ]);
-
-                if (insertError) {
-                    alert(`Error creating stock: ${insertError.message}`);
-                } else {
-                    alert(`Stock ${ticker} created successfully!`);
-                    createStockForm.reset();
-                }
-            } catch (err) {
-                console.error('Stock Creation Error:', err);
-                alert(`Error creating stock: ${err.message || 'Unknown error'}`);
+            if (existingStock && existingStock.length > 0) {
+                alert('Stock creation blocked: Company name or ticker already exists.');
+                return;
             }
-        });
-    }
+
+            const { error: insertError } = await supabaseClient.from('stocks').insert([
+                {
+                    company_name: companyName,
+                    ticker: ticker,
+                    volume: volume,
+                    current_price: price,
+                    daily_high: price,
+                    daily_low: price
+                }
+            ]);
+
+            if (insertError) {
+                alert(`Error creating stock: ${insertError.message}`);
+            } 
+            else {
+                alert(`Stock ${ticker} created successfully!`);
+                document.getElementById('createStockForm').reset();
+            }
+        } 
+        catch (err) {
+            console.error('Stock Creation Error:', err);
+            alert(`Error creating stock: ${err.message || 'Unknown error'}`);
+        }
+    });
+}
+
+// MARKET SETTING PLACEHOLDER
+function marketSetting() {
+    // TODO: Implement market settings logic
+}
+
+// CASH ACCOUNT PLACEHOLDER
+function cashAccount() {
+    // TODO: Implement cash account management
+}
+
+// BUY STOCK PLACEHOLDER
+function buyStock() {
+    // TODO: Implement buy stock logic
+}
+
+// SELL STOCK PLACEHOLDER
+function sellStock() {
+    // TODO: Implement sell stock logic
+}
+
+// PORTFOLIO PLACEHOLDER
+function portfolio() {
+    // TODO: Implement user portfolio rendering
+}
+
+// TRANSACTION HISTORY PLACEHOLDER
+function transactionHistory() {
+    // TODO: Implement transaction history log
+}
+
+// RANDOM NUMBER GENERATOR
+function RNG() {
+    // TODO: Implement stock price fluctuation logic
 }
