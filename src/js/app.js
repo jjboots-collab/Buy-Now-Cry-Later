@@ -61,7 +61,7 @@ function createUserAccount() {
 
             // If username is already used, display message to try again.
             if (existingUser) {
-                alert('Username is unavailable, please use another.');
+                alert('Username is unavailable, please choose another.');
                 return;
             }
 

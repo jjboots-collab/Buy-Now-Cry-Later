@@ -1,0 +1,65 @@
+<!-- LANDING PAGE - LOGIN & REGISTRATION -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Now, Cry Later - Login & Register</title>
+    <!-- Prevent favicon 404 errors -->
+    <link rel="icon" href="data:,">
+    <!-- Root-relative path to CSS -->
+    <link rel="stylesheet" href="./src/css/main.css">
+</head>
+<body>
+    <header>
+        <h1>Buy Now, Cry Later</h1>
+        <p>Stock Trading & Portfolio Management Platform</p>
+    </header>
+
+    <main>
+        <!-- Login Form -->
+        <section class="auth-section">
+            <h2>Log In</h2>
+            <form id="loginForm">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter username" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+                <button type="submit">Log In</button>
+            </form>
+        </section>
+
+        <hr>
+
+        <!-- User Account Creation Form -->
+        <section class="auth-section">
+            <h2>Create an Account</h2>
+            <form id="registerForm">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" placeholder="John Doe" required>
+
+                <!-- Unique ID matching app.js: regUsername -->
+                <label for="regUsername">Username</label>
+                <input type="text" id="regUsername" name="username" placeholder="johndoe" required>
+
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="john@example.com" required>
+
+                <!-- Unique ID matching app.js: regPassword -->
+                <label for="regPassword">Password</label>
+                <input type="password" id="regPassword" name="password" placeholder="••••••••" required>
+
+                <button type="submit">Create Account</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- 1. Load Supabase CDN Library First -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2. Load Application JS Second -->
+    <script src="./src/js/app.js"></script>
+</body>
+</html>
