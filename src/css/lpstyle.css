@@ -48,6 +48,53 @@ main {
 form {
     display: flex;
     flex-direction: column;
+    max-width: 400px;
+}
+
+label {
+    margin: 10px 0 4px;
+    font-weight: bold;
+}
+
+input,
+select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.form-row .dashboard-section {
+    flex: 1;
+    min-width: 0;
+}
+
+.form-row form {
+    max-width: none;
+}
+
+button {
+    margin-top: 18px;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    font-family: inherit;
+    background: #c2e0ff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #a8d2ff;
 }
 
 label {
