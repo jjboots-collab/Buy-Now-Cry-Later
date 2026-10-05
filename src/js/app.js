@@ -158,16 +158,7 @@ function createStock() {
             alert('Database connection not available.');
             return;
         }
-
-        // Verify it is an admin creating the stock.
-        try {
-            const currentUser = activeUser();
-            // If not an admin role, display message.
-            if (!currentUser || currentUser.role !== 'administrator') {
-                alert('Administrator authentication required.');
-                return;
-            }
-
+        
             // Get stock info from the form.
             const companyName = document.getElementById('companyName').value.trim();
             const ticker = document.getElementById('stockTicker').value.trim().toUpperCase();
@@ -222,31 +213,52 @@ function createStock() {
 // MARKET SETTING
 function marketSetting() {
 	// Attach event listener
+	
+// Form name: marketSettingsForm
+// Element: openTime
+// Element: closeTime
+// Element: holidayDates
+// Element: opDays
 }
 
 // CASH ACCOUNT
 function cashAccount() {
 	// Attach event listener
+
+// Form name: cashForm
+// Element: cashAction
+// Element: cashAmount
 }
 
 // BUY STOCK
 function buyStock() {
 	// Attach event listener
+	
+// Form name: buyStockForm
+// Element: buyTicker
+// Element: buyQuantity
 }
 
 // SELL STOCK
 function sellStock() {
 	// Attach event listener
+	
+// Form name: sellStockForm
+// Element: sellTicker
+// Element: sellQuantity
 }
 
 // PORTFOLIO
 function portfolio() {
-}
-// Attach event listener
+	// Attach event listener
 
+// Table name: Don't think we need to input anything from the user.
+}	
 // TRANSACTION HISTORY
 function transactionHistory() {
 	// Attach event listener
+	
+// Form name: Nothing needed from the user here.
 }
 
 // RANDOM NUMBER GENERATOR
