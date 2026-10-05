@@ -68,7 +68,7 @@ header h2 {
 
 /* ===== Main content ===== */
 main {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto 40px;
     padding: 0 20px;
 }
@@ -76,6 +76,7 @@ main {
 
 .form-row {
     display: flex;
+    max-width: 600px;
     flex-direction: row;
     align-items: flex-start;
     gap: 30px;
@@ -159,7 +160,7 @@ thead th {
 }
 
 /* ===== Small screens ===== */
-@media (max-width: 800px) {
+@media (max-width: 600px) {
     .form-row {
         flex-direction: column;
         gap: 0;
