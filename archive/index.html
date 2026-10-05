@@ -1,19 +1,22 @@
+<!-- LANDING PAGE - LOGIN & REGISTRATION -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buy Now, Cry Later</title>
-    <link rel="stylesheet" href="./src/css/lpstyle.css">
+    <title>Buy Now, Cry Later - Login & Register</title>
+    <!-- Prevent favicon 404 errors -->
+    <link rel="icon" href="data:,">
+    <!-- Root-relative path to CSS -->
+    <link rel="stylesheet" href="./src/css/main.css">
 </head>
 <body>
     <header>
         <h1>Buy Now, Cry Later</h1>
-        <p>Trade Stocks, build portfolio, and reach financial goals.</p>
+        <p>Stock Trading & Portfolio Management Platform</p>
     </header>
 
     <main>
-   	 <div class="form-row">
         <!-- Login Form -->
         <section class="auth-section">
             <h2>Log In</h2>
@@ -28,6 +31,7 @@
             </form>
         </section>
 
+        <hr>
 
         <!-- User Account Creation Form -->
         <section class="auth-section">
@@ -50,8 +54,6 @@
                 <button type="submit">Create Account</button>
             </form>
         </section>
-    </div>
-    <hr>
     </main>
 
     <!-- 1. Load Supabase CDN Library First -->

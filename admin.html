@@ -1,11 +1,10 @@
-<!-- ADMIN -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buy Now, Cry Later - Admin Panel</title>
-    <link rel="stylesheet" href="../src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css">
 </head>
 <body>
     <header>
@@ -14,9 +13,10 @@
     </header>
 
     <main>
+    <div class="form-row">
         <!-- Process 2.0: Create New Stock -->
         <section class="admin-section">
-            <h2>Process 2.0: Add New Stock</h2>
+            <h2>Add New Stock</h2>
             <form id="createStockForm">
                 <label for="stockTicker">Ticker Symbol:</label>
                 <input type="text" id="stockTicker" name="ticker" placeholder="e.g., AAPL" required>
@@ -38,7 +38,7 @@
 
         <!-- Process 3.0: Market Schedule Management -->
         <section class="admin-section">
-            <h2>Process 3.0: Set Market Operating Schedule</h2>
+            <h2>Set Market Operating Schedule</h2>
             <form id="marketSettingsForm">
                 <label for="openTime">Market Open Time:</label>
                 <input type="time" id="openTime" name="openTime" required>
@@ -63,6 +63,7 @@
                 <button type="submit">Update Schedule</button>
             </form>
         </section>
+    </div>
     </main>
 
     <!-- 1. Supabase CDN Library -->

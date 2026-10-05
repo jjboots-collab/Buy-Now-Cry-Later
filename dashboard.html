@@ -1,67 +1,64 @@
-<!-- USER DASHBOARD -->
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard - Buy Now, Cry Later</title>
-    <link rel="stylesheet" href="../src/css/main.css">
+    <link rel="stylesheet" href="./src/css/main.css">
 </head>
 <body>
     <header>
-        <h1>Customer Dashboard</h1>
-        <h2>Cash Balance: <span id="userCashDisplay">$0.00</span></h2>
+        <div class="header-text">
+            <h1>Customer Dashboard</h1>
+            <h2>Cash Balance: <span id="userCashDisplay">$0.00</span></h2>
+        </div>
+
+        <!-- Nav Buttons - subject to name change and function change, working on it-->
+        <nav class="main-nav">
+            <a class="nav-btn active" href="dashboard.html">Dashboard</a>
+            <a class="nav-btn" href="viewstocks.html">View Stocks</a>
+            <a class="nav-btn" href="portfolio.html">Portfolio</a>
+            <a class="nav-btn" href="history.html">Trade History</a>
+        </nav>
     </header>
 
     <main>
-        <!-- Deposit or Withdraw Cash -->
-        <section class="dashboard-section">
-            <h3>Manage Cash Account</h3>
-            <form id="cashForm">
-                <label for="cashAction">Action:</label>
-                <select id="cashAction" name="cashAction" required>
-                    <option value="DEPOSIT">Deposit</option>
-                    <option value="WITHDRAW">Withdraw</option>
-                </select>
+        <!-- Three forms side by side -->
+        <div class="form-row">
+            <!-- Deposit or Withdraw Cash -->
+            <section class="dashboard-section">
+                <h3>Manage Cash Account</h3>
+                <form id="cashForm">
+                    <label for="cashAction">Action:</label>
+                    <select id="cashAction" name="cashAction" required>
+                        <option value="DEPOSIT">Deposit</option>
+                        <option value="WITHDRAW">Withdraw</option>
+                    </select>
 
-                <label for="cashAmount">Amount ($):</label>
-                <input type="number" id="cashAmount" name="cashAmount" step="0.01" min="0.01" placeholder="e.g., 500.00" required>
+                    <label for="cashAmount">Amount ($):</label>
+                    <input type="number" id="cashAmount" name="cashAmount" step="0.01" min="0.01" placeholder="e.g., 500.00" required>
 
-                <button type="submit">Execute Cash Action</button>
-            </form>
-        </section>
+                    <button type="submit">Execute Cash Action</button>
+                </form>
+            </section>
 
-        <hr>
 
-        <!-- Buy Stock -->
-        <section class="dashboard-section">
-            <h3>Buy Stock</h3>
-            <form id="buyStockForm">
-                <label for="buyTicker">Stock Ticker:</label>
-                <input type="text" id="buyTicker" name="buyTicker" placeholder="e.g., AAPL" required>
 
-                <label for="buyQuantity">Quantity:</label>
-                <input type="number" id="buyQuantity" name="buyQuantity" min="1" placeholder="e.g., 10" required>
+            <!-- Sell Stock -->
+            <section class="dashboard-section">
+                <h3>Sell Stock</h3>
+                <form id="sellStockForm">
+                    <label for="sellTicker">Stock Ticker:</label>
+                    <input type="text" id="sellTicker" name="sellTicker" placeholder="e.g., AAPL" required>
 
-                <button type="submit">Buy Shares</button>
-            </form>
-        </section>
+                    <label for="sellQuantity">Quantity:</label>
+                    <input type="number" id="sellQuantity" name="sellQuantity" min="1" placeholder="e.g., 5" required>
 
-        <hr>
-
-        <!-- Sell Stock -->
-        <section class="dashboard-section">
-            <h3>Sell Stock</h3>
-            <form id="sellStockForm">
-                <label for="sellTicker">Stock Ticker:</label>
-                <input type="text" id="sellTicker" name="sellTicker" placeholder="e.g., AAPL" required>
-
-                <label for="sellQuantity">Quantity:</label>
-                <input type="number" id="sellQuantity" name="sellQuantity" min="1" placeholder="e.g., 5" required>
-
-                <button type="submit">Sell Shares</button>
-            </form>
-        </section>
+                    <button type="submit">Sell Shares</button>
+                </form>
+            </section>
+        </div>
 
         <hr>
 
