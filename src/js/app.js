@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
     createUserAccount();
     accountLogin();
     createStock();
-  //  marketSetting();
-  //  cashAccount();
- //   buyStock();
- //   sellStock();
-  //  portfolio();
-  //  transactionHistory();
-   // RNG();
+    marketSetting();
+    cashAccount();
+    buyStock();
+    sellStock();
+    portfolio();
+    transactionHistory();
+    RNG();
 });
 
 // GET ACTIVE USER
@@ -211,7 +211,7 @@ function createStock() {
 }
 
 // MARKET SETTING
-//function marketSetting() {
+function marketSetting() {
 	// Attach event listener
 	
 // Form name: marketSettingsForm
@@ -222,7 +222,7 @@ function createStock() {
 }
 
 // CASH ACCOUNT
-//function cashAccount() {
+function cashAccount() {
 	// Attach event listener
 
 // Form name: cashForm
@@ -231,7 +231,7 @@ function createStock() {
 }
 
 // BUY STOCK
-//function buyStock() {
+function buyStock() {
 	// Attach event listener
 	
 // Form name: buyStockForm
@@ -240,7 +240,7 @@ function createStock() {
 }
 
 // SELL STOCK
-//function sellStock() {
+function sellStock() {
 	// Attach event listener
 	
 // Form name: sellStockForm
@@ -249,19 +249,19 @@ function createStock() {
 }
 
 // PORTFOLIO
-//function portfolio() {
+function portfolio() {
 	// Attach event listener
 
 // Table name: Don't think we need to input anything from the user.
 }	
 // TRANSACTION HISTORY
-//function transactionHistory() {
+function transactionHistory() {
 	// Attach event listener
 	
 // Form name: Nothing needed from the user here.
 }
 
 // RANDOM NUMBER GENERATOR
-//function RNG() {
+function RNG() {
 	// Attach event listener
 }
