@@ -158,7 +158,14 @@ function createStock() {
             alert('Database connection not available.');
             return;
         }
-        
+		// Verify it is an admin creating the stock.
+	        try {
+	            const currentUser = activeUser();
+	            // If not an admin role, display message.
+	            if (!currentUser || currentUser.role !== 'administrator') {
+	                alert('Administrator authentication required.');
+	                return;
+	            }
             // Get stock info from the form.
             const companyName = document.getElementById('companyName').value.trim();
             const ticker = document.getElementById('stockTicker').value.trim().toUpperCase();
@@ -221,7 +228,7 @@ function marketSetting() {
 // Element: opDays
 }
 
-// CASH ACCOUNT
+// CASH ACCOUNT DO THIS NEXT
 function cashAccount() {
 	// Attach event listener
 
