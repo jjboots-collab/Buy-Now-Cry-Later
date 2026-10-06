@@ -87,7 +87,7 @@ function createUserAccount() {
                 window.location.href = 'index.html';
             }
         } 
-        // Catch unexpected errors.
+         // Catch unexpected errors.
         catch (err) {
             console.error('Registration Error:', err);
             alert(`Registration failed: ${err.message || 'Unknown error'}`);
