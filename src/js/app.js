@@ -222,13 +222,13 @@ function marketSetting() {
 	// Attach event listener
 	
 // Form name: marketSettingsForm
-// Element: openTime
+// Element: openTime in the DB: open_time varchar
 // Element: closeTime
 // Element: holidayDates
 // Element: opDays
 }
 
-// CASH ACCOUNT DO THIS NEXT
+// CASH ACCOUNT DO THIS NEXT add in a logout button
 function cashAccount() {
 	// Attach event listener
 
