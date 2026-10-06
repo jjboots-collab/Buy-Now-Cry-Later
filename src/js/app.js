@@ -158,7 +158,7 @@ function createStock() {
             alert('Database connection not available.');
             return;
         }
-		// Verify it is an admin creating the stock.
+			// Verify it is an admin creating the stock.
 	        try {
 	            const currentUser = activeUser();
 	            // If not an admin role, display message.
