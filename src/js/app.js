@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
     createUserAccount();
     accountLogin();
     createStock();
-    marketSetting();
-    cashAccount();
-    buyStock();
-    sellStock();
-    portfolio();
-    transactionHistory();
-    RNG();
+  //  marketSetting();
+  //  cashAccount();
+ //   buyStock();
+ //   sellStock();
+  //  portfolio();
+  //  transactionHistory();
+   // RNG();
 });
 
 // GET ACTIVE USER
