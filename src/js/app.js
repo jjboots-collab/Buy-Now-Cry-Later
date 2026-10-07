@@ -295,11 +295,15 @@ function cashAccount() {
 			// Ensure the amount is rounded to 2 decimals.
 			newBalance = Math.round(newBalance * 100) / 100;
 			
-			// Update user balance.
-			await supabaseClient
+			// Update user balance and catch DB side errors.
+			const {error:updateError} = await supabaseClient
 				.from('users')
 				.update({cash_balance: newBalance})
 				.eq('username', currentUser.username);
+				
+			// Throw error if DB returns error.
+			if (updateError)
+				throw updateError;
 			
 			// Update transaction history.
 			let cashChange;
@@ -309,8 +313,8 @@ function cashAccount() {
 			else {
 				cashChange = -amount;
 			}
-
-			await supabaseClient
+			// Update transactions and catch DB side errors.
+			const {error: dbError} = await supabaseClient
 				.from('transactions')
 				.insert([{
 					username: currentUser.username,
@@ -319,6 +323,10 @@ function cashAccount() {
 					cash_change: cashChange,					
 				}]);
 			
+			// Throw error if DB returns error.
+			if (dbError)
+				throw dbError;	
+				
 			// DB updated successfully message.
 			alert(`Successfully completed ${action} of $${amount.toFixed(2)}`);
 			window.location.reload();
