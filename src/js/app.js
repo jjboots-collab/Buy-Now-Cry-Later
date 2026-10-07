@@ -41,9 +41,9 @@ function createUserAccount() {
             alert('Database connection not available.');
             return;
         }
-
-        // Get information from the form.
+		// Try and Catch block.        
         try {
+			// Get information from the form.
             const fullName = document.getElementById('fullName').value.trim();
             const username = document.getElementById('regUsername').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -108,8 +108,9 @@ function accountLogin() {
             return;
         }
 
-        // Read login name and password.
+        // Try and catch block.
         try {
+			// Read login name and password.
             const usernameInput = document.getElementById('username').value.trim();
             const passwordInput = document.getElementById('password').value;
 
@@ -149,7 +150,7 @@ function accountLogin() {
 // CREATE STOCK
 function createStock() {
 	// Attach event listener
-	document.getElementById('createStockForm')?.addEventListener('submit', async (event) => {
+	document.getElementById('cashForm')?.addEventListener('submit', async (event) => {
 		// Stop page reloading or navation defaults.
 		event.preventDefault();
 
@@ -158,8 +159,9 @@ function createStock() {
             alert('Database connection not available.');
             return;
         }
-			// Verify it is an admin creating the stock.
+			// Try and Catch block.			
 	        try {
+				// Verify it is an admin creating the stock.
 	            const currentUser = activeUser();
 	            // If not an admin role, display message.
 	            if (!currentUser || currentUser.role !== 'administrator') {
@@ -209,7 +211,7 @@ function createStock() {
                 document.getElementById('createStockForm').reset();
             }
         }
-        // Catch unexpected errors.
+        // Catch.
         catch (err) {
             console.error('Stock Creation Error:', err);
             alert(`Error creating stock: ${err.message || 'Unknown error'}`);
@@ -228,10 +230,98 @@ function marketSetting() {
 // Element: opDays
 }
 
-// CASH ACCOUNT DO THIS NEXT add in a logout button
+// CASH ACCOUNT  ***** DO THIS NEXT add in a logout button *****
 function cashAccount() {
 	// Attach event listener
+	document.getElementById('cashForm')?.addEventListener('submit', async (event) => {
+		// Stop page reloading or navigation defaults.
+		event.preventDefault();
 
+		// Check connection to the DB.
+		if (!supabaseClient) {
+			alert('Database connection not available.');
+			return; 
+		}
+
+		// Try and catch block.
+		try {
+			// Get info from the form
+			const action = document.getElementById('cashAction').value;
+			const amount = parseFloat(document.getElementById('cashAmount').value);
+						
+			// Verify amount is a number and not less than 0.
+			if (isNaN(amount) || amount <= 0) {
+				alert('Please enter an amount greater than 0!');
+				return;
+			}
+
+			// Get cash balance for the current user
+			const { data: userData, error: userError } = await supabaseClient
+				.from('users')
+				.select('cash_balance')
+				.eq('username', currentUser.username)
+				.maybeSingle();
+			
+			// If DB read problem throw error.
+			if (userError)
+				throw userError;
+			
+			// Set newBalance from DB read.
+			const balance = parseFloat(userData.cash_balance);
+			let newBalance = balance;
+			
+			// If/else for Deposit and Withdraw
+			if (action === 'Withdraw' || action === 'WITHDRAW') {
+				// Check to make sure there is enough in the account to withdraw.
+				if (balance < amount) {
+					alert('Insuffecient Funds!');
+					return;
+				}
+				// Subtract withdraw amount from balance.
+				newBalance = balance - amount;
+			}
+			else {
+				// Add deposit amount to balance.
+				newBalance = balance + amount;
+			}
+			
+			// Ensure the amount is rounded to 2 decimals.
+			newBalance = Math.round(newBalance * 100) / 100;
+			
+			// Update user balance.
+			await supabaseClient
+				.from('users')
+				.update({cash_balance: newBalance})
+				.eq('username', currentUser.username);
+			
+			// Update transaction history.
+			let cashChange;
+			if (action === 'deposit' || action === 'DEPOSIT') {
+				cashChange = amount;
+			}
+			else {
+				cashChange = -amount;
+			}
+
+			await supabaseClient
+				.from('transactions')
+				.insert([{
+					username: currentUser.username,
+					transaction_type: action,
+					amount: amount,
+					cash_change: cashChange,					
+				}]);
+			
+			// DB updated successfully message.
+			alert(`Successfully completed ${action} of $${amount.toFixed(2)}`);
+			window.location.reload();
+		} catch (err) {
+			console.error('Transaction error:', err);
+			alert(`Transaction failed: ${err.message || 'Unknown error'}`);
+		}
+	});
+}
+	
 // Form name: cashForm
 // Element: cashAction
 // Element: cashAmount
