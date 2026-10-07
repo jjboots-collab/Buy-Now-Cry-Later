@@ -321,11 +321,7 @@ function cashAccount() {
 		}
 	});
 }
-	
-// Form name: cashForm
-// Element: cashAction
-// Element: cashAmount
-}
+
 
 // BUY STOCK
 function buyStock() {
