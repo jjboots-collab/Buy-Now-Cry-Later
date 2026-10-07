@@ -242,6 +242,13 @@ function cashAccount() {
 			alert('Database connection not available.');
 			return; 
 		}
+		
+		// Get activeUser.
+		const currentUser = activeUser();
+			if (!currentUser || !currentUser.username) {
+			alert('No active user found. Please log in.');
+			return;
+		}
 
 		// Try and catch block.
 		try {
