@@ -150,7 +150,7 @@ function accountLogin() {
 // CREATE STOCK
 function createStock() {
 	// Attach event listener
-	document.getElementById('cashForm')?.addEventListener('submit', async (event) => {
+	document.getElementById('createStockForm')?.addEventListener('submit', async (event) => {
 		// Stop page reloading or navation defaults.
 		event.preventDefault();
 
