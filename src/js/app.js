@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     accountLogin();
     createStock();
     marketSetting();
-	dashboardData();
+	//dashboardData();
     cashAccount();
     buyStock();
     sellStock();
@@ -329,7 +329,7 @@ function cashAccount() {
 				throw dbError;
 			
 			// Pull new balance for dashboard.
-			const balanceElement = document.getElementById('balanceDisplay');
+			const balanceElement = document.getElementById('userCashDisplay');
 			if (balanceElement) {
 				balanceElement.textContent = `$${newBalance.toFixed(2)}`;
 			}
