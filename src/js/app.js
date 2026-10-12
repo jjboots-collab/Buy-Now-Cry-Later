@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     accountLogin();
     createStock();
     marketSetting();
+	dashboardData();
     cashAccount();
     buyStock();
     sellStock();
@@ -325,11 +326,17 @@ function cashAccount() {
 			
 			// Throw error if DB returns error.
 			if (dbError)
-				throw dbError;	
+				throw dbError;
+			
+			// Pull new balance for dashboard.
+			const balanceElement = document.getElementById('balanceDisplay');
+			if (balanceElement) {
+				balanceElement.textContent = `$${newBalance.toFixed(2)}`;
+			}
 				
 			// DB updated successfully message.
 			alert(`Successfully completed ${action} of $${amount.toFixed(2)}`);
-			window.location.reload();
+			
 		} catch (err) {
 			console.error('Transaction error:', err);
 			alert(`Transaction failed: ${err.message || 'Unknown error'}`);
