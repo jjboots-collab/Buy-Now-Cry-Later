@@ -148,6 +148,49 @@ function accountLogin() {
     });
 }
 
+// DASHBOARD DATA INITIALIZATION (cash only)
+function dashboardData() {
+    // Check connection to the DB.
+    if (!supabaseClient) {
+        return;
+    }
+
+    // Get activeUser.
+    const currentUser = activeUser();
+    if (!currentUser || !currentUser.username) {
+        return;
+    }
+
+    // Execute async operations.
+    (async () => {
+        try {
+            // Get user cash balance from the DB.
+            const { data: userData, error } = await supabaseClient
+                .from('users')
+                .select('cash_balance')
+                .eq('username', currentUser.username)
+                .maybeSingle();
+
+            // If DB returns an error, throw error.
+            if (error) {
+                throw error;
+            }
+			
+            // Add cash balance to the dashboard element.
+            if (userData) {             
+                const balanceElement = document.getElementById('userCashDisplay');
+                if (balanceElement) {
+                    balanceElement.textContent = `$${parseFloat(userData.cash_balance).toFixed(2)}`;
+                }
+            }
+        } 
+        // Catch unexpected errors.
+        catch (err) {
+            console.error('Error loading dashboard data:', err);
+        }
+    })();
+}
+
 // CREATE STOCK
 function createStock() {
 	// Attach event listener
