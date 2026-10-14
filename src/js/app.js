@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     accountLogin();
     createStock();
     marketSetting();
-	//dashboardData();
+	dashboardData();
     cashAccount();
     buyStock();
     sellStock();
