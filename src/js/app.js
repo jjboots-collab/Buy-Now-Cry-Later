@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     accountLogin();
     createStock();
     marketSetting();
+	dashboardData();
     cashAccount();
     buyStock();
     sellStock();
@@ -145,6 +146,49 @@ function accountLogin() {
             alert('An error occurred during login.');
         }
     });
+}
+
+// DASHBOARD DATA INITIALIZATION (cash only)
+function dashboardData() {
+    // Check connection to the DB.
+    if (!supabaseClient) {
+        return;
+    }
+
+    // Get activeUser.
+    const currentUser = activeUser();
+    if (!currentUser || !currentUser.username) {
+        return;
+    }
+
+    // Execute async operations.
+    (async () => {
+        try {
+            // Get user cash balance from the DB.
+            const { data: userData, error } = await supabaseClient
+                .from('users')
+                .select('cash_balance')
+                .eq('username', currentUser.username)
+                .maybeSingle();
+
+            // If DB returns an error, throw error.
+            if (error) {
+                throw error;
+            }
+			
+            // Add cash balance to the dashboard element.
+            if (userData) {             
+                const balanceElement = document.getElementById('userCashDisplay');
+                if (balanceElement) {
+                    balanceElement.textContent = `$${parseFloat(userData.cash_balance).toFixed(2)}`;
+                }
+            }
+        } 
+        // Catch unexpected errors.
+        catch (err) {
+            console.error('Error loading dashboard data:', err);
+        }
+    })();
 }
 
 // CREATE STOCK
@@ -325,11 +369,17 @@ function cashAccount() {
 			
 			// Throw error if DB returns error.
 			if (dbError)
-				throw dbError;	
+				throw dbError;
+			
+			// Pull new balance for dashboard.
+			const balanceElement = document.getElementById('userCashDisplay');
+			if (balanceElement) {
+				balanceElement.textContent = `$${newBalance.toFixed(2)}`;
+			}
 				
 			// DB updated successfully message.
 			alert(`Successfully completed ${action} of $${amount.toFixed(2)}`);
-			window.location.reload();
+			
 		} catch (err) {
 			console.error('Transaction error:', err);
 			alert(`Transaction failed: ${err.message || 'Unknown error'}`);
