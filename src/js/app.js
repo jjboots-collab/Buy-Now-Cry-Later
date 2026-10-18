@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     portfolio();
     transactionHistory();
     RNG();
+	logout();
 });
 
 // GET ACTIVE USER
@@ -28,6 +29,29 @@ function activeUser() {
     catch (e) {
         return null;
     }
+}
+
+// LOGOUT
+function logout() {
+	// Attach event listener
+	document.getElementById('logoutButton')?.addEventListener('click', async (event) => {
+        // Stop page reloading or navation defaults.
+		event.preventDefault();
+			
+		try {
+			// Clear active user data from local storage.
+			localStorage.removeItem('activeUser');
+			
+			// Redirect back to the landing page.
+			window.location.replace = 'index.html';
+		}
+		
+		// Catch unexpected errors.
+		catch (err) {
+    		console.error('LOGOUT ERROR:', err);
+    		alert(`ERROR LOGGING OUT: ${err.message || 'Unknown error in the code'}`);
+		}
+	});
 }
 
 // USER ACCOUNT CREATION
@@ -526,6 +550,7 @@ function buyStock() {
 					}]);
 							
 				if (dbError) throw dbError;
+				
 			// Reset the form elements and reload the page.
 			document.getElementById('buyStockForm').reset();
 			location.reload();
@@ -543,10 +568,149 @@ function buyStock() {
 // SELL STOCK
 function sellStock() {
 	// Attach event listener
-	
-// Form name: sellStockForm
-// Element: sellTicker
-// Element: sellQuantity
+	document.getElementById('sellStockForm')?.addEventListener('submit', async (event) => {
+        // Stop page reloading or navation defaults.
+		event.preventDefault();
+			
+		// Check connection to the DB.
+		if (!supabaseClient) {
+		    alert('Database connection not available.');
+		    return;
+		}		
+			
+		try {
+			// Verify it is an customer selling the stock.
+			const currentUser = activeUser();
+	        // If not a current customer, display message.
+	        if (!currentUser || currentUser.role !== 'customer') {
+	            alert('You must be a registered customer to sell stocks!');
+	            return;
+            }
+			
+			// Get stock info from the form.
+            const sellTicker = document.getElementById('sellTicker').value.trim().toUpperCase();
+			const sellVolume = parseInt(document.getElementById('sellVolume').value, 10);		
+			
+			// Get information from the stocks table, set error.
+			const { data: existingStock, error: searchError } = await supabaseClient
+				.from('stocks')
+				.select('ticker, volume, current_price, company_name')
+				.eq('ticker', sellTicker)
+				.single();
+			
+			// Get portfolio information for this stock, set error
+			const { data: existingPortfolio, error: portfolioError } = await supabaseClient
+				.from('portfolio')
+				.select('shares')
+				.eq('username', currentUser.username)
+				.eq('ticker', sellTicker)
+				.maybeSingle();
+
+			// Get information from the users table, set error	
+			const { data: userData, error: userError } = await supabaseClient
+				.from('users')
+				.select('cash_balance')
+				.eq('username', currentUser.username)
+				.single();
+
+			// If the DB action results in an error, throw error for the table.
+			if (searchError || portfolioError || userError) throw (searchError || portfolioError || userError);
+			
+			const cash_balance = userData.cash_balance;
+			const current_price = existingStock.current_price;
+			const volume = existingStock.volume;
+			
+			let ownedShares;
+			if (existingPortfolio) {
+			    ownedShares = existingPortfolio.shares;
+			} else {
+			    ownedShares = 0;
+			}
+			
+			let totalSale = 0;
+			// Check if user owns the stock and has enough shares to sell.
+			if (!existingPortfolio || ownedShares < sellVolume) {
+				alert('You do not own enough shares of this stock to sell that volume.');
+				return;
+			}
+			
+			// Calculate totalSale and round to two decimals.
+			totalSale = sellVolume * current_price;
+			totalSale = Math.round(totalSale * 100) / 100;
+			
+			// Confirm or Cancel the order with the user.
+			const confirmSell = confirm(`SELL ${sellVolume} shares of ${existingStock.company_name} (${sellTicker}) for $${totalSale.toFixed(2)}?`);
+			// If canceled send cancel message and stop the sell.
+			if (!confirmSell) {
+    			alert('ORDER CANCELLED');
+    			return;
+			}
+			
+			let action;
+			let cashChange = totalSale;
+
+			// If block for the sell.
+			if (ownedShares >= sellVolume){
+				action = 'SELL';
+			
+				// Update user balance.
+				const newTotal = cash_balance + totalSale;
+				await supabaseClient
+				.from('users')
+				.update({cash_balance: newTotal})
+				.eq('username', currentUser.username);
+			
+				// If selling all shares, delete row from portfolio, otherwise update shares
+				if (ownedShares === sellVolume) {
+					const { error: deleteError } = await supabaseClient
+						.from('portfolio')
+						.delete()
+						.eq('username', currentUser.username)
+						.eq('ticker', sellTicker);
+					
+					if (deleteError) throw deleteError;
+				} else {
+					const { error: updatePortfolioError } = await supabaseClient
+						.from('portfolio')
+						.update({shares: ownedShares - sellVolume})            
+						.eq('username', currentUser.username)
+						.eq('ticker', sellTicker);
+						
+					if (updatePortfolioError) throw updatePortfolioError;
+				}
+			
+				// Update remaining volume for the stock.
+				const {error: updateError} = await supabaseClient
+					.from('stocks')
+					.update({volume: volume + sellVolume})
+					.eq('ticker', sellTicker);					
+				
+				if (updateError) throw updateError;
+						
+				// Update transactions and catch DB side errors.
+				const {error: dbError} = await supabaseClient
+					.from('transactions')
+					.insert([{
+						username: currentUser.username,
+						transaction_type: action,
+						amount: totalSale,
+						cash_change: cashChange					
+					}]);
+							
+				if (dbError) throw dbError;
+				
+				// Reset the form elements and reload the page.
+				document.getElementById('sellStockForm').reset();
+				location.reload();
+			}
+		}
+		
+		// Catch unexpected errors.
+		catch (err) {
+    		console.error('SELL STOCK ERROR:', err);
+    		alert(`ERROR SELLING STOCK: ${err.message || 'Unknown error in the code'}`);
+		}
+	});
 }
 
 // PORTFOLIO
