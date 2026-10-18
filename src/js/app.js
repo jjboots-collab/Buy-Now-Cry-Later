@@ -255,10 +255,10 @@ function createStock() {
                 document.getElementById('createStockForm').reset();
             }
         }
-        // Catch.
+        // Catch unexpected errors.
         catch (err) {
             console.error('Stock Creation Error:', err);
-            alert(`Error creating stock: ${err.message || 'Unknown error'}`);
+            alert(`Error creating stock: ${err.message || 'Unknown error inside the code'}`);
         }
     });
 }
@@ -322,7 +322,7 @@ function cashAccount() {
 			let newBalance = balance;
 			
 			// If/else for Deposit and Withdraw
-			if (action === 'Withdraw' || action === 'WITHDRAW') {
+			if (action === 'Withdraw') {
 				// Check to make sure there is enough in the account to withdraw.
 				if (balance < amount) {
 					alert('Insuffecient Funds!');
@@ -351,7 +351,7 @@ function cashAccount() {
 			
 			// Update transaction history.
 			let cashChange;
-			if (action === 'deposit' || action === 'DEPOSIT') {
+			if (action === 'deposit') {
 				cashChange = amount;
 			}
 			else {
@@ -379,10 +379,11 @@ function cashAccount() {
 				
 			// DB updated successfully message.
 			alert(`Successfully completed ${action} of $${amount.toFixed(2)}`);
-			
+		
+		// Catch unexpected errors.	
 		} catch (err) {
 			console.error('Transaction error:', err);
-			alert(`Transaction failed: ${err.message || 'Unknown error'}`);
+			alert(`Transaction failed: ${err.message || 'Unknown error in the code'}`);
 		}
 	});
 }
@@ -391,11 +392,153 @@ function cashAccount() {
 // BUY STOCK
 function buyStock() {
 	// Attach event listener
-	
-// Form name: buyStockForm
-// Element: buyTicker
-// Element: buyQuantity
-}
+	document.getElementById('buyStockForm')?.addEventListener('submit', async (event) => {
+        // Stop page reloading or navation defaults.
+		event.preventDefault();
+			
+		// Check connection to the DB.
+		if (!supabaseClient) {
+		    alert('Database connection not available.');
+		    return;
+		}		
+			
+		try {
+			// Verify it is an customer buying the stock.
+			const currentUser = activeUser();
+	        // If not a current customer, display message.
+	        if (!currentUser || currentUser.role !== 'customer') {
+	            alert('You must be a registered customer to purchase stocks!');
+	            return;
+            }
+			
+			// Get stock info from the form.
+            const buyTicker = document.getElementById('buyTicker').value.trim().toUpperCase();
+			const buyVolume = parseInt(document.getElementById('buyVolume').value, 10);		
+			
+			// Get information from the stocks table, set error.
+			const { data: existingStock, error: searchError } = await supabaseClient
+				.from('stocks')
+				.select('ticker, volume, current_price, company_name')
+				.eq('ticker', buyTicker)
+				.single();
+			
+				//Get information from the users table, set error	
+			const { data: userData, error: userError } = await supabaseClient
+				.from('users')
+				.select('cash_balance')
+				.eq('username', currentUser.username)
+				.single();
+
+			// If the DB action results in an error, throw error.
+			if (searchError || userError) throw (searchError || userError);
+			
+			const cash_balance = userData.cash_balance;
+			const current_price = existingStock.current_price;
+			const volume = existingStock.volume;
+
+			let stockExists = false;
+			// Check if buyTicker is in the DB.
+			if (existingStock){
+				stockExists = true;
+			}
+			
+			let availableVolume = false;
+			let totalCost = 0;
+			// Check available stock volume against buyVolume and calculate totalCost.
+			if (stockExists && buyVolume <= volume) {
+			    totalCost = buyVolume * current_price;
+				//Round to two decimals
+				totalCost = Math.round(totalCost * 100) / 100;
+				availableVolume = true;
+			}
+			
+			let availableCash = false;
+			// Check totalCost against cash account
+			if (totalCost <= cash_balance){
+				availableCash = true;
+			}
+			
+			// Confirm or Cancel the order with the user.
+			const confirmBuy = confirm(`BUY ${buyVolume} shares of ${existingStock.company_name} (${buyTicker}) for $${totalCost.toFixed(2)}?`);
+			// If canceled send cancel message and stop the buy.
+			if (!confirmBuy) {
+    			alert('ORDER CANCELLED');
+    			return;
+			}
+			
+			let action;
+			let cashChange = -totalCost;
+
+			// If block for the buy.
+			if (availableCash && availableVolume){
+				action = 'BUY';
+			
+				// Update user balance.
+				const newTotal = cash_balance - totalCost;
+				await supabaseClient
+				.from('users')
+				.update({cash_balance: newTotal})
+				.eq('username', currentUser.username);
+			
+				// If stock is already owned, update volume
+				const { data: existingPortfolio } = await supabaseClient
+					.from('portfolio')
+					.select('shares')
+					.eq('username', currentUser.username)
+					.eq('ticker', buyTicker)
+					.maybeSingle();
+
+				if (existingPortfolio) {
+					await supabaseClient
+					.from('portfolio')
+					.update({shares: existingPortfolio.shares + buyVolume})            
+					.eq('username', currentUser.username)
+					.eq('ticker', buyTicker);
+				}
+				
+				// Update portfolio with new stock purchase.
+				else {					
+					const { error: insertError } = await supabaseClient.from('portfolio').insert({		                
+						username: currentUser.username,
+						ticker: buyTicker,						
+						shares: buyVolume						
+					});
+					// If DB error, throw error.
+					if (insertError) throw insertError;
+				}
+			
+				// Update remaining volume for the stock.
+				const {error: updateError} = await supabaseClient
+					.from('stocks')
+					.update({volume: volume - buyVolume})
+					.eq('ticker', buyTicker);					
+				
+				if (updateError) throw updateError;
+						
+				// Update transactions and catch DB side errors.
+				const {error: dbError} = await supabaseClient
+					.from('transactions')
+					.insert([{
+						username: currentUser.username,
+						transaction_type: action,
+						amount: totalCost,
+						cash_change: cashChange					
+					}]);
+							
+				if (dbError) throw dbError;
+			// Reset the form elements and reload the page.
+			document.getElementById('buyStockForm').reset();
+			location.reload();
+			}
+		}
+		
+		// Catch unexpected errors.
+		catch (err) {
+    		console.error('BUY STOCK ERROR:', err);
+    		alert(`ERROR BUYING STOCK: ${err.message || 'Unknown error in the code'}`);
+		}
+	});
+}	
 
 // SELL STOCK
 function sellStock() {
