@@ -375,7 +375,7 @@ function cashAccount() {
 			
 			// Update transaction history.
 			let cashChange;
-			if (action === 'deposit') {
+			if (action === 'deposit' || action === 'WITHDRAW') {
 				cashChange = amount;
 			}
 			else {
