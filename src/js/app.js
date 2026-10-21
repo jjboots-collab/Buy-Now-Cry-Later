@@ -346,7 +346,7 @@ function cashAccount() {
 			let newBalance = balance;
 			
 			// If/else for Deposit and Withdraw
-			if (action === 'Withdraw') {
+			if (action === 'Withdraw' || action === 'WITHDRAW') {
 				// Check to make sure there is enough in the account to withdraw.
 				if (balance < amount) {
 					alert('Insuffecient Funds!');
