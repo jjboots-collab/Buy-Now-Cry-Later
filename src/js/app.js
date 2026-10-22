@@ -172,7 +172,7 @@ function accountLogin() {
     });
 }
 
-// DASHBOARD DATA INITIALIZATION (cash only)
+// DASHBOARD DATA INITIALIZATION (cash balance and portfolio) ***add transaction as well
 function dashboardData() {
     // Check connection to the DB.
     if (!supabaseClient) {
@@ -213,6 +213,9 @@ function dashboardData() {
             console.error('Error loading dashboard data:', err);
         }
     })();
+	
+	// Load portfolio data.
+	    portfolio();
 }
 
 // CREATE STOCK
@@ -298,7 +301,7 @@ function marketSetting() {
 // Element: opDays
 }
 
-// CASH ACCOUNT  ***** DO THIS NEXT add in a logout button *****
+// CASH ACCOUNT
 function cashAccount() {
 	// Attach event listener
 	document.getElementById('cashForm')?.addEventListener('submit', async (event) => {
@@ -715,10 +718,79 @@ function sellStock() {
 
 // PORTFOLIO
 function portfolio() {
-	// Attach event listener
+	// Check connection to the DB.
+	if (!supabaseClient) {
+	    alert('Database connection not available.');
+	    return;
+	}		
+		
+	try {
+		// Retrieve active user.
+		const currentUser = activeUser();
+		
+		// If not a current customer or the current user, stop execution.
+		if (!currentUser || currentUser.role !== 'customer') {
+		    return;
+		}
 
-// Table name: Don't think we need to input anything from the user.
-}	
+		// Get elements from the DB for each owned stock.
+		supabaseClient
+			.from('portfolio')
+			.select('ticker, shares, stocks (company_name, current_price, daily_high, daily_low, volume)')
+			.eq('username', currentUser.username)
+			.then(({data: portfolioData, error: portfolioError}) => {
+				//If any error from the DB, throw error
+				if (portfolioError) {
+					throw portfolioError;
+				}
+
+				// loop through all owned stocks in the 'portfolio' table.
+				if (portfolioData) {
+					for (let i = 0; i < portfolioData.length; i++) {
+						const item = portfolioData[i];
+						
+						// from 'portfolio' get ticker as 'ticker', shares as 'sharesOwned'
+						const ticker = item.ticker;
+						const sharesOwned = item.shares;
+
+						// from 'stocks' get company_name as 'companyName', current_price as 'singleStockPrice', 
+						// daily_high as 'dailyHigh', daily_low as 'dailyLow', volume as 'availableVol'
+						// Initialize variables for dashboard elements
+						let companyName;
+						let singleStockPrice;
+						let dailyHigh;
+						let dailyLow;
+						let availableVol;
+
+						// for each stock in the portfolio table pull the data from the stocks table.
+						if (item.stocks) {
+							companyName = item.stocks.company_name;
+							singleStockPrice = item.stocks.current_price;
+							dailyHigh = item.stocks.daily_high;
+							dailyLow = item.stocks.daily_low;
+							availableVol = item.stocks.volume;
+						} 
+						
+						// Calculate total value of owned stock * volume as 'marketValue'
+						let marketValue = sharesOwned * singleStockPrice;
+						//Round to two decimal places.
+						marketValue = Math.round(marketValue * 100) / 100;
+					}
+				}
+			})
+			// Catch DB errors from the loop.
+			.catch((err) => {
+    			console.error('PORTFOLIO DB ERROR', err);
+    			alert(`THE DB THREW AN ERROR: ${err.message || 'Unknown error in the code'}`);
+			});
+	}
+	// Catch unknown errors.
+	catch (err) {
+		console.error('PORTFOLIO UPDATE ERROR', err);
+		alert(`ERROR SETTING PORTFOLIO VIEW: ${err.message || 'Unknown error in the code'}`);
+	}
+}
+
 // TRANSACTION HISTORY
 function transactionHistory() {
 	// Attach event listener
