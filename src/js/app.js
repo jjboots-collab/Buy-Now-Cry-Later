@@ -509,7 +509,7 @@ function buyStock() {
 			
 				// If stock is already owned, update volume
 				const { data: existingPortfolio } = await supabaseClient
-					.from('portfolio')
+					.from('portfolios')
 					.select('shares')
 					.eq('username', currentUser.username)
 					.eq('ticker', buyTicker)
