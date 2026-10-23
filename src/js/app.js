@@ -508,7 +508,7 @@ function buyStock() {
 				.eq('username', currentUser.username);
 			
 				// If stock is already owned, update volume
-				const { data: existingPortfolio } = await supabaseClient
+				const {data: existingPortfolio} = await supabaseClient
 					.from('portfolios')
 					.select('shares')
 					.eq('username', currentUser.username)
@@ -517,15 +517,15 @@ function buyStock() {
 
 				if (existingPortfolio) {
 					await supabaseClient
-					.from('portfolio')
+					.from('portfolios')
 					.update({shares: existingPortfolio.shares + buyVolume})            
 					.eq('username', currentUser.username)
 					.eq('ticker', buyTicker);
 				}
 				
-				// Update portfolio with new stock purchase.
+				// Update portfolios with new stock purchase.
 				else {					
-					const { error: insertError } = await supabaseClient.from('portfolio').insert({		                
+					const { error: insertError } = await supabaseClient.from('portfolios').insert({		                
 						username: currentUser.username,
 						ticker: buyTicker,						
 						shares: buyVolume						
@@ -601,9 +601,9 @@ function sellStock() {
 				.eq('ticker', sellTicker)
 				.single();
 			
-			// Get portfolio information for this stock, set error
+			// Get portfolios information for this stock, set error
 			const { data: existingPortfolio, error: portfolioError } = await supabaseClient
-				.from('portfolio')
+				.from('portfolios')
 				.select('shares')
 				.eq('username', currentUser.username)
 				.eq('ticker', sellTicker)
@@ -663,10 +663,10 @@ function sellStock() {
 				.update({cash_balance: newTotal})
 				.eq('username', currentUser.username);
 			
-				// If selling all shares, delete row from portfolio, otherwise update shares
+				// If selling all shares, delete row from portfolios, otherwise update shares
 				if (ownedShares === sellVolume) {
 					const { error: deleteError } = await supabaseClient
-						.from('portfolio')
+						.from('portfolios')
 						.delete()
 						.eq('username', currentUser.username)
 						.eq('ticker', sellTicker);
@@ -674,7 +674,7 @@ function sellStock() {
 					if (deleteError) throw deleteError;
 				} else {
 					const { error: updatePortfolioError } = await supabaseClient
-						.from('portfolio')
+						.from('portfolios')
 						.update({shares: ownedShares - sellVolume})            
 						.eq('username', currentUser.username)
 						.eq('ticker', sellTicker);
@@ -735,7 +735,7 @@ function portfolio() {
 
 		// Get elements from the DB for each owned stock.
 		supabaseClient
-			.from('portfolio')
+			.from('portfolios')
 			.select('ticker, shares, stocks (company_name, current_price, daily_high, daily_low, volume)')
 			.eq('username', currentUser.username)
 			.then(({data: portfolioData, error: portfolioError}) => {
@@ -744,12 +744,12 @@ function portfolio() {
 					throw portfolioError;
 				}
 
-				// loop through all owned stocks in the 'portfolio' table.
+				// loop through all owned stocks in the 'portfolios' table.
 				if (portfolioData) {
 					for (let i = 0; i < portfolioData.length; i++) {
 						const item = portfolioData[i];
 						
-						// from 'portfolio' get ticker as 'ticker', shares as 'sharesOwned'
+						// from 'portfolios' get ticker as 'ticker', shares as 'sharesOwned'
 						const ticker = item.ticker;
 						const sharesOwned = item.shares;
 
@@ -762,7 +762,7 @@ function portfolio() {
 						let dailyLow;
 						let availableVol;
 
-						// for each stock in the portfolio table pull the data from the stocks table.
+						// for each stock in the portfolios table pull the data from the stocks table.
 						if (item.stocks) {
 							companyName = item.stocks.company_name;
 							singleStockPrice = item.stocks.current_price;
