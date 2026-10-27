@@ -758,7 +758,7 @@ async function portfolio() {
 		const { data: portfolioData, error: portfolioError } = await supabaseClient
 			.from('portfolios')
 			.select('*')
-			.eq('username', currentUser.username);
+			
 
         console.log('AWAIT COMPLETED. RAW PORTFOLIO DATA:', portfolioData);
         console.log('AWAIT COMPLETED. PORTFOLIO ERROR:', portfolioError);
