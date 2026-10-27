@@ -754,8 +754,10 @@ async function portfolio() {
             .from('portfolios')
             .select('ticker, shares, stocks (company_name, current_price, daily_high, daily_low, volume)')
             .eq('username', currentUser.username);			
-
+		
+		// Debug in browser console, DELETE ME AFTER FIXES*******
         console.log('AWAIT COMPLETED. RAW PORTFOLIO DATA:', portfolioData);
+		// Debug in browser console, DELETE ME AFTER FIXES*******
         console.log('AWAIT COMPLETED. PORTFOLIO ERROR:', portfolioError);
 
         // If any error from the DB, throw error.
