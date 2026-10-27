@@ -877,7 +877,7 @@ async function transactionHistory() {
         }
 
         // Get the table element for transactions.
-        const transactionTableElement = document.getElementById('transactionTable');
+        const transactionTableElement = document.getElementById('historyTable');
 
         // If table element does not exist on the page, stop execution.
         if (!transactionTableElement) {
