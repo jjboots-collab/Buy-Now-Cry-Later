@@ -177,7 +177,7 @@ function accountLogin() {
     });
 }
 
-// DASHBOARD DATA INITIALIZATION (cash balance and portfolio) ***add transaction as well
+// DASHBOARD DATA INITIALIZATION (cash balance and portfolio)
 function dashboardData() {
     // Check connection to the DB.
     if (!supabaseClient) {
@@ -722,96 +722,124 @@ function sellStock() {
 }
 
 // PORTFOLIO
-function portfolio() {
-	// Check connection to the DB.
-	if (!supabaseClient) {
-	    alert('Database connection not available.');
-	    return;
-	}		
+async function portfolio() {
+    console.log('PORTFOLIO FUNCTION CALLED');
+
+    // Check connection to the DB.
+    if (!supabaseClient) {
+        alert('Database connection not available.');
+        return;
+    }       
+        
+    try {
+        // Retrieve active user.
+        const currentUser = activeUser();
 		
-	try {
-		// Retrieve active user.
-		const currentUser = activeUser();
-		console.log('ACTIVE USER CHECK:', currentUser);
-		console.log('USER ROLE:', currentUser ? currentUser.role : 'No user');
+		// Debug in browser console, DELETE ME AFTER FIXES*******
+        console.log('ACTIVE USER OBJECT:', currentUser);
+		// Debug in browser console, DELETE ME AFTER FIXES*******
+        console.log('USER ROLE:', currentUser ? currentUser.role : 'No user');
+        
+        // If not a current customer or the current user, stop execution.
+        if (!currentUser || currentUser.role !== 'customer') {
+            console.log('PORTFOLIO STOPPED: User is not a valid customer.');
+            return;
+        }
 		
-		// If not a current customer or the current user, stop execution.
-		if (!currentUser || currentUser.role !== 'customer') {
-		    return;
-		}
-		
-		console.log('ABOUT TO FIRE SUPABASE QUERY FOR USER:', currentUser.username);
+		// Debug in browser console, DELETE ME AFTER FIXES*******
+        console.log('ABOUT TO FIRE SUPABASE QUERY FOR USER:', currentUser.username);
 
-		// Get elements from the DB for each owned stock.
-		supabaseClient
-			.from('portfolios')
-			.select('ticker, shares, stocks (company_name, current_price, daily_high, daily_low, volume)')
-			.eq('username', currentUser.username)
-			.then(({data: portfolioData, error: portfolioError}) => {
-				//If any error from the DB, throw error
-				if (portfolioError) {
-					throw portfolioError;
-				}
+        // Await the Supabase query explicitly using async/await.
+        const { data: portfolioData, error: portfolioError } = await supabaseClient
+            .from('portfolios')
+            .select('ticker, shares, stocks (company_name, current_price, daily_high, daily_low, volume)')
+            .eq('username', currentUser.username);
 
-				// loop through all owned stocks in the 'portfolios' table.
-				if (portfolioData) {
-					for (let i = 0; i < portfolioData.length; i++) {
-						const item = portfolioData[i];
-						
-						// from 'portfolios' get ticker as 'ticker', shares as 'sharesOwned'
-						const ticker = item.ticker;
-						const sharesOwned = item.shares;
+        console.log('AWAIT COMPLETED. RAW PORTFOLIO DATA:', portfolioData);
+        console.log('AWAIT COMPLETED. PORTFOLIO ERROR:', portfolioError);
 
-						// from 'stocks' get company_name as 'companyName', current_price as 'singleStockPrice', 
-						// daily_high as 'dailyHigh', daily_low as 'dailyLow', volume as 'availableVol'
-						// Initialize variables for dashboard elements
-						let companyName;
-						let singleStockPrice;
-						let dailyHigh;
-						let dailyLow;
-						let availableVol;
+        // If any error from the DB, throw error.
+        if (portfolioError) {
+            throw portfolioError;
+        }
 
-						// for each stock in the portfolios table pull the data from the stocks table.
-						if (item.stocks) {
-							companyName = item.stocks.company_name;
-							singleStockPrice = item.stocks.current_price;
-							dailyHigh = item.stocks.daily_high;
-							dailyLow = item.stocks.daily_low;
-							availableVol = item.stocks.volume;
-						} 
-						
-						// Calculate total value of owned stock * volume as 'marketValue'
-						let marketValue = sharesOwned * singleStockPrice;
-						//Round to two decimal places.
-						marketValue = Math.round(marketValue * 100) / 100;
-						
-						// Build table for the dashboard.
-						rowsHTML += `
-							<tr>
-								<td>${companyName}</td>
-								<td>${ticker}</td>
-								<td>$${singleStockPrice.toFixed(2)}</td>
-								<td>${availableVol}</td>
-								<td>$${marketValue.toFixed(2)}</td>
-								<td>$${dailyHigh.toFixed(2)}</td>
-								<td>$${dailyLow.toFixed(2)}</td>
-								<td>${sharesOwned}</td>
-							</tr>
-						`;
-					}
-				}
-			})
-			// Catch DB errors from the loop.
-			.catch((err) => {
-    			console.error('PORTFOLIO DB ERROR', err);
-    			alert(`THE DB THREW AN ERROR: ${err.message || 'Unknown error in the code'}`);
-			});
-	}
-	// Catch unknown errors.
-	catch (err) {
-		console.error('PORTFOLIO UPDATE ERROR', err);
-		alert(`ERROR SETTING PORTFOLIO VIEW: ${err.message || 'Unknown error in the code'}`);
-	}
+        // Get the table body element for the portfolio.
+        const portfolioTableElement = document.getElementById('portfolioTable');
+
+        // If table element does not exist on the page, stop execution.
+        if (!portfolioTableElement) {
+            console.log('PORTFOLIO TABLE ELEMENT NOT FOUND IN DOM');
+            return;
+        }
+
+        // Initialize variable to hold HTML rows.
+        let rowsHTML = '';
+
+        // Loop through all owned stocks in the 'portfolios' table.
+        if (portfolioData && portfolioData.length > 0) {
+            for (let i = 0; i < portfolioData.length; i++) {
+                const item = portfolioData[i];
+                
+                const ticker = item.ticker;
+                const sharesOwned = item.shares;
+
+                let companyName;
+                let singleStockPrice;
+                let dailyHigh;
+                let dailyLow;
+                let availableVol;
+
+                if (item.stocks) {
+                    companyName = item.stocks.company_name;
+                    singleStockPrice = item.stocks.current_price;
+                    dailyHigh = item.stocks.daily_high;
+                    dailyLow = item.stocks.daily_low;
+                    availableVol = item.stocks.volume;
+                } 
+                else {
+                    companyName = '';
+                    singleStockPrice = 0;
+                    dailyHigh = 0;
+                    dailyLow = 0;
+                    availableVol = 0;
+                }
+                
+                // Calculate market value.
+                let marketValue = sharesOwned * singleStockPrice;
+                marketValue = Math.round(marketValue * 100) / 100;
+
+                // Build HTML row matching your table column headers.
+                rowsHTML += `
+                    <tr>
+                        <td>${companyName}</td>
+                        <td>${ticker}</td>
+                        <td>$${singleStockPrice.toFixed(2)}</td>
+                        <td>${availableVol}</td>
+                        <td>$${marketValue.toFixed(2)}</td>
+                        <td>$${dailyHigh.toFixed(2)}</td>
+                        <td>$${dailyLow.toFixed(2)}</td>
+                        <td>${sharesOwned}</td>
+                    </tr>
+                `;
+            }
+        } 
+        else {
+            // If user owns no stocks, display an empty state row.
+            rowsHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center;">You do not own any stocks yet.</td>
+                </tr>
+            `;
+        }
+
+        // Insert the generated rows into the table body element.
+        portfolioTableElement.innerHTML = rowsHTML;
+    }
+    // Catch unknown errors or network rejections.
+    catch (err) {
+        console.error('PORTFOLIO CATCH BLOCK ERROR:', err);
+        alert(`THE DB THREW AN ERROR: ${err.message || 'Unknown error in the code'}`);
+    }
 }
 
 // TRANSACTION HISTORY
