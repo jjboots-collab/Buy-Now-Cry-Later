@@ -219,8 +219,11 @@ function dashboardData() {
         }
     })();
 	
-	// Load portfolio data.
+		// Load portfolio data.
 	    portfolio();
+	
+		// Load Transaction data.
+		transactionHistory()
 }
 
 // CREATE STOCK
