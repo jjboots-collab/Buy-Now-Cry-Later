@@ -721,7 +721,7 @@ function sellStock() {
 	});
 }
 
-// PORTFOLIO
+// PORTFOLIO **set as async
 async function portfolio() {
     console.log('PORTFOLIO FUNCTION CALLED');
 
@@ -749,7 +749,7 @@ async function portfolio() {
 		// Debug in browser console, DELETE ME AFTER FIXES*******
         console.log('ABOUT TO FIRE SUPABASE QUERY FOR USER:', currentUser.username);
 
-        // Await the Supabase query explicitly using async/await.
+        // Await the Supabase query ***altered from then() structure
         const { data: portfolioData, error: portfolioError } = await supabaseClient
             .from('portfolios')
             .select('ticker, shares, stocks (company_name, current_price, daily_high, daily_low, volume)')
@@ -763,7 +763,7 @@ async function portfolio() {
             throw portfolioError;
         }
 
-        // Get the table body element for the portfolio.
+        // Get the table element for the portfolio.
         const portfolioTableElement = document.getElementById('portfolioTable');
 
         // If table element does not exist on the page, stop execution.
@@ -778,17 +778,19 @@ async function portfolio() {
         // Loop through all owned stocks in the 'portfolios' table.
         if (portfolioData && portfolioData.length > 0) {
             for (let i = 0; i < portfolioData.length; i++) {
-                const item = portfolioData[i];
-                
+				// Initialize constants for the loop.
+                const item = portfolioData[i];                
                 const ticker = item.ticker;
                 const sharesOwned = item.shares;
-
+				
+				// initialize variables for the loop.
                 let companyName;
                 let singleStockPrice;
                 let dailyHigh;
                 let dailyLow;
                 let availableVol;
-
+				
+				// Set variables from the DB.
                 if (item.stocks) {
                     companyName = item.stocks.company_name;
                     singleStockPrice = item.stocks.current_price;
@@ -796,19 +798,21 @@ async function portfolio() {
                     dailyLow = item.stocks.daily_low;
                     availableVol = item.stocks.volume;
                 } 
-                else {
-                    companyName = '';
-                    singleStockPrice = 0;
-                    dailyHigh = 0;
-                    dailyLow = 0;
-                    availableVol = 0;
-                }
+				
+				// Set the empty name return ****MAY NOT NEED THIS....test it*****
+                //else {
+                   // companyName = '';
+                   // singleStockPrice = 0;
+                   // dailyHigh = 0;
+                   // dailyLow = 0;
+                   // availableVol = 0;
+               // }
                 
                 // Calculate market value.
                 let marketValue = sharesOwned * singleStockPrice;
                 marketValue = Math.round(marketValue * 100) / 100;
 
-                // Build HTML row matching your table column headers.
+                // Build HTML row matching table headers.
                 rowsHTML += `
                     <tr>
                         <td>${companyName}</td>
@@ -824,7 +828,7 @@ async function portfolio() {
             }
         } 
         else {
-            // If user owns no stocks, display an empty state row.
+            // If user owns no stocks, display message.
             rowsHTML = `
                 <tr>
                     <td colspan="8" style="text-align: center;">You do not own any stocks yet.</td>
