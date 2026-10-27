@@ -775,6 +775,20 @@ function portfolio() {
 						let marketValue = sharesOwned * singleStockPrice;
 						//Round to two decimal places.
 						marketValue = Math.round(marketValue * 100) / 100;
+						
+						// Build table for the dashboard.
+						rowsHTML += `
+							<tr>
+								<td>${companyName}</td>
+								<td>${ticker}</td>
+								<td>$${singleStockPrice.toFixed(2)}</td>
+								<td>${availableVol}</td>
+								<td>$${marketValue.toFixed(2)}</td>
+								<td>$${dailyHigh.toFixed(2)}</td>
+								<td>$${dailyLow.toFixed(2)}</td>
+								<td>${sharesOwned}</td>
+							</tr>
+						`;
 					}
 				}
 			})
