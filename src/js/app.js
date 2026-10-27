@@ -750,10 +750,15 @@ async function portfolio() {
         console.log('ABOUT TO FIRE SUPABASE QUERY FOR USER:', currentUser.username);
 
         // Await the Supabase query ***altered from then() structure
-        const { data: portfolioData, error: portfolioError } = await supabaseClient
-            .from('portfolios')
-            .select('ticker, shares, stocks (company_name, current_price, daily_high, daily_low, volume)')
-            .eq('username', currentUser.username);
+        //const { data: portfolioData, error: portfolioError } = await supabaseClient
+            //.from('portfolios')
+            //.select('ticker, shares, stocks (company_name, current_price, daily_high, daily_low, volume)')
+            //.eq('username', currentUser.username);
+		
+		const { data: portfolioData, error: portfolioError } = await supabaseClient
+			.from('portfolios')
+			.select('*')
+			.eq('username', currentUser.username);
 
         console.log('AWAIT COMPLETED. RAW PORTFOLIO DATA:', portfolioData);
         console.log('AWAIT COMPLETED. PORTFOLIO ERROR:', portfolioError);
