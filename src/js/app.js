@@ -700,6 +700,7 @@ function sellStock() {
 						
 				// Update transactions and catch DB side errors.
 				const {error: dbError} = await supabaseClient
+				.from('transactions')
 				.insert([{
 					username: currentUser.username,
 					transaction_type: action,
