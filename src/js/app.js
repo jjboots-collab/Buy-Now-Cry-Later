@@ -727,6 +727,7 @@ function portfolio() {
 	try {
 		// Retrieve active user.
 		const currentUser = activeUser();
+		console.log('ACTIVE USER CHECK:', currentUser);
 		
 		// If not a current customer or the current user, stop execution.
 		if (!currentUser || currentUser.role !== 'customer') {
