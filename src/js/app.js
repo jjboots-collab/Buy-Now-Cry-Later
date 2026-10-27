@@ -291,6 +291,7 @@ function createStock() {
 }
 
 // MARKET SETTING
+// TODO
 function marketSetting() {
 	// Attach event listener
 	
@@ -414,7 +415,6 @@ function cashAccount() {
 		}
 	});
 }
-
 
 // BUY STOCK
 function buyStock() {
@@ -792,6 +792,7 @@ function portfolio() {
 }
 
 // TRANSACTION HISTORY
+// TODO
 function transactionHistory() {
 	// Attach event listener
 	
@@ -799,6 +800,7 @@ function transactionHistory() {
 }
 
 // RANDOM NUMBER GENERATOR
+// TODO
 function RNG() {
 	// Attach event listener
 }
