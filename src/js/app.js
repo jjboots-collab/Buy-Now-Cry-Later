@@ -2,12 +2,7 @@
 const supabaseUrl = 'https://ymffltlbfjsudxhfxoue.supabase.co';
 const supabaseKey = 'sb_publishable_quXXs0juoM6G2G0iJxtJZg_wnMS5cOd';
 const supabaseClient = (window.supabase && window.supabase.createClient) 
-    ? window.supabase.createClient(supabaseUrl, supabaseKey,{
-		auth: {
-			persistSession: false,
-			autoRefreshToken: false
-		}
-	})
+    ? window.supabase.createClient(supabaseUrl, supabaseKey)
     : null;
 
 // INITIALIZE APP FUNCTIONS AFTER DOM LOADS
