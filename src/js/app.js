@@ -734,6 +734,8 @@ function portfolio() {
 		if (!currentUser || currentUser.role !== 'customer') {
 		    return;
 		}
+		
+		console.log('ABOUT TO FIRE SUPABASE QUERY FOR USER:', currentUser.username);
 
 		// Get elements from the DB for each owned stock.
 		supabaseClient
