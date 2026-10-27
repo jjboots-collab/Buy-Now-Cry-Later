@@ -912,13 +912,13 @@ async function transactionHistory() {
 				// compress if/then for SQL.
                 rowsHTML += `
                     <tr>
-                        <td>${formattedDate}</td>
-                        <td>${transactionType}</td>
-                        <td>${companyName}</td>
-                        <td>${ticker}</td>
-                        <td>${amount || 0}</td>						
-                        <td>$${pricePerShare != null ? Number(pricePerShare).toFixed(2) : '0.00'}</td>
-                        <td>$${cashChange != null ? Number(cashChange).toFixed(2) : '0.00'}</td>
+						<td>${formattedDate}</td>
+						<td>${transactionType}</td>
+						<td>${companyName || '-'}</td>
+						<td>${ticker || '-'}</td>
+						<td>${pricePerShare != null ? '$' + Number(pricePerShare).toFixed(2) : '-'}</td>
+						<td>${amount != null ? '$' + Number(amount).toFixed(2) : '$0.00'}</td>
+						<td>$${cashChange != null ? Number(cashChange).toFixed(2) : '0.00'}</td>
                     </tr>
                 `;
             }
