@@ -802,7 +802,8 @@ async function portfolio() {
 		                singleStockPrice = stockInfo.current_price;
 		                dailyHigh = stockInfo.daily_high;
 		                dailyLow = stockInfo.daily_low;
-		                availableVol = stockInfo.volume;		           
+		                availableVol = stockInfo.volume;
+					}         
 		        }
                 
                 // Calculate market value.
