@@ -791,22 +791,19 @@ async function portfolio() {
                 let availableVol;
 				
 				// Set variables from the DB.
-                if (item.stocks) {
-                    companyName = item.stocks.company_name;
-                    singleStockPrice = item.stocks.current_price;
-                    dailyHigh = item.stocks.daily_high;
-                    dailyLow = item.stocks.daily_low;
-                    availableVol = item.stocks.volume;
-                } 
-				
-				// Set the empty name return ****MAY NOT NEED THIS....test it*****
-                else {
-					companyName = '';
-					singleStockPrice = 0;
-					dailyHigh = 0;
-					dailyLow = 0;
-					availableVol = 0;
-               }
+				if (item.stocks) {
+					
+		            // Array error where no stock is returned.
+		            const stockInfo = Array.isArray(item.stocks) ? item.stocks[0] : item.stocks;
+					
+					// Get stockInfo from the DB.
+		            if (stockInfo) {
+		                companyName = stockInfo.company_name;
+		                singleStockPrice = stockInfo.current_price;
+		                dailyHigh = stockInfo.daily_high;
+		                dailyLow = stockInfo.daily_low;
+		                availableVol = stockInfo.volume;		           
+		        }
                 
                 // Calculate market value.
                 let marketValue = sharesOwned * singleStockPrice;
