@@ -872,11 +872,13 @@ async function transactionHistory() {
             return;
         }		
 
-        // Await the Supabase query.
+        // Get all transactions from the DB. Await the Supabase query.
         const { data: transactionData, error: transactionError } = await supabaseClient
             .from('transactions')
             .select('*')
-            .eq('username', currentUser.username);		
+            .eq('username', currentUser.username);
+			// Set the order of transactions with newest on top.
+			.order('timestamp', {ascending: false})	
 
         // If error from the DB, throw error.
         if (transactionError) {
