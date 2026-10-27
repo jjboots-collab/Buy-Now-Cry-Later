@@ -839,19 +839,103 @@ async function portfolio() {
         // Insert the generated rows into the table body element.
         portfolioTableElement.innerHTML = rowsHTML;
     }
-    // Catch unknown errors or network rejections.
+    // Catch unknown errors or network/DB issues.
     catch (err) {
         console.error('PORTFOLIO CATCH BLOCK ERROR:', err);
         alert(`THE DB THREW AN ERROR: ${err.message || 'Unknown error in the code'}`);
     }
 }
 
-// TRANSACTION HISTORY
-// TODO
-function transactionHistory() {
-	// Attach event listener
+// TRANSACTION HISTORY **set as async
+async function transactionHistory() {
+    // Check connection to the DB.
+    if (!supabaseClient) {
+        alert('Database connection not available.');
+        return;
+    }       
 	
-// Form name: Nothing needed from the user here.
+	// Try block.       
+    try {
+        // Retrieve active user.
+        const currentUser = activeUser();
+				    
+        // If not a current customer or the current user, stop execution.
+        if (!currentUser || currentUser.role !== 'customer') {
+            console.log('ACTION STOPPED: User is not a valid customer.');
+            return;
+        }		
+
+        // Await the Supabase query.
+        const { data: transactionData, error: transactionError } = await supabaseClient
+            .from('transactions')
+            .select('*')
+            .eq('username', currentUser.username);		
+
+        // If error from the DB, throw error.
+        if (transactionError) {
+            throw transactionError;
+        }
+
+        // Get the table element for transactions.
+        const transactionTableElement = document.getElementById('transactionTable');
+
+        // If table element does not exist on the page, stop execution.
+        if (!transactionTableElement) {
+            console.log('TRANSACTION TABLE ELEMENT NOT FOUND IN DOM');
+            return;
+        }
+
+        // Initialize variable to hold HTML rows.
+        let rowsHTML = '';
+
+        // Loop through all transactions.
+        if (transactionData && transactionData.length > 0) {
+            for (let i = 0; i < transactionData.length; i++) {
+				// Initialize constants for the loop.
+                const item = transactionData[i];                
+                const transactionType = item.transaction_type;
+                const companyName = item.company_name;
+                const ticker = item.ticker;
+                const amount = item.amount;
+                const pricePerShare = item.price_per_share;
+                const cashChange = item.cash_change;
+                const timestamp = item.timestamp;
+
+                // Format timestamp for clean display.
+                const formattedDate = timestamp ? new Date(timestamp).toLocaleString() : '';
+
+                // Build HTML row matching table headers.
+				// compress if/then for SQL.
+                rowsHTML += `
+                    <tr>
+                        <td>${formattedDate}</td>
+                        <td>${transactionType}</td>
+                        <td>${companyName}</td>
+                        <td>${ticker}</td>
+                        <td>${amount || 0}</td>						
+                        <td>$${pricePerShare != null ? Number(pricePerShare).toFixed(2) : '0.00'}</td>
+                        <td>$${cashChange != null ? Number(cashChange).toFixed(2) : '0.00'}</td>
+                    </tr>
+                `;
+            }
+        } 
+        else {
+            // If user has no transactions, display message.
+            rowsHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center;">You do not have any transactions yet.</td>
+                </tr>
+            `;
+        }
+
+        // Insert rows into the table.
+        transactionTableElement.innerHTML = rowsHTML;
+    }
+    // Catch unknown errors or network/DB issues.
+    catch (err) {
+        console.error('TRANSACTION HISTORY CATCH BLOCK ERROR:', err);
+        alert(`THE DB THREW AN ERROR: ${err.message || 'Unknown error in the code'}`);
+    }
 }
 
 // RANDOM NUMBER GENERATOR
