@@ -387,7 +387,7 @@ function cashAccount() {
 			
 			// Update transaction history.
 			let cashChange;
-			if (action === 'deposit' || action === 'WITHDRAW') {
+			if (action === 'deposit' || action === 'DEPOSIT') {
 				cashChange = amount;
 			}
 			else {
@@ -700,13 +700,16 @@ function sellStock() {
 						
 				// Update transactions and catch DB side errors.
 				const {error: dbError} = await supabaseClient
-					.from('transactions')
-					.insert([{
-						username: currentUser.username,
-						transaction_type: action,
-						amount: totalSale,
-						cash_change: cashChange					
-					}]);
+				.insert([{
+					username: currentUser.username,
+					transaction_type: action,
+					company_name: existingStock.company_name,
+					ticker: sellTicker,
+					volume: sellVolume,
+					price_per_share: current_price,
+					amount: totalSale,
+					cash_change: cashChange					
+				}]);
 							
 				if (dbError) throw dbError;
 				
