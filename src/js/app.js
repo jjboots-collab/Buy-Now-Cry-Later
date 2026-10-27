@@ -871,7 +871,7 @@ async function transactionHistory() {
         const { data: transactionData, error: transactionError } = await supabaseClient
             .from('transactions')
             .select('*')
-            .eq('username', currentUser.username);
+            .eq('username', currentUser.username)
 			// Set the order of transactions with newest on top.
 			.order('timestamp', {ascending: false})	
 
