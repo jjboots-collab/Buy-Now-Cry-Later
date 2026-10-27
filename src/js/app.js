@@ -901,7 +901,7 @@ async function transactionHistory() {
                 const cashChange = item.cash_change;
                 const timestamp = item.timestamp;
 
-                // Format timestamp for clean display.
+                // Change to a shorter local timestamp format.
                 const formattedDate = timestamp ? new Date(timestamp).toLocaleString() : '';
 
                 // Build HTML row matching table headers.
@@ -923,7 +923,7 @@ async function transactionHistory() {
             // If user has no transactions, display message.
             rowsHTML = `
                 <tr>
-                    <td colspan="7" style="text-align: center;">You do not have any transactions yet.</td>
+                    <td colspan="7" style="text-align: center;">You have not made any transactions.</td>
                 </tr>
             `;
         }
