@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - Buy Now, Cry Later</title>
+    <link rel="stylesheet" href="./src/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="header-text">
+            <h1>Customer Dashboard</h1>
+            <h2>Cash Balance: <span id="userCashDisplay"></span></h2>
+        </div>
+
+        <!-- Nav Buttons - subject to name change and function change, working on it-->
+        <nav class="main-nav">
+            <a class="nav-btn active" href="dashboard.html">Dashboard</a>
+            <a class="nav-btn" href="viewstocks.html">View Stocks</a>
+            <a class="nav-btn" href="transactionhistory.html">Transaction History</a>
+        </nav>
+    </header>
+
+    <main>
+    
+  <!-- Transaction History -->
+        <section class="dashboard-section">
+            <h3>Transaction History</h3>
+            <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Type</th>
+                        <th>Company Name</th>
+                        <th>Volume</th>
+                        <th>Price/Share</th>
+                        <th>Cash Change</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTable">
+                    <!-- Dynamic Rows Rendered by app.js -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Supabase CDN Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Single Application Logic File -->
+    <script src="./src/js/app.js"></script>
+</body>
+</html>
