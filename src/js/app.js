@@ -882,7 +882,7 @@ async function stocks() {
 		}
 		
 		// Insert rows into the table.
-		viewStocks.innerHTML = rowsHTML;
+		stocksTable.innerHTML = rowsHTML;
 	}
 	
 	
