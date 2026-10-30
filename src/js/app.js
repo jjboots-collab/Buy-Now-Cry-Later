@@ -6,21 +6,21 @@ const supabaseClient = (window.supabase && window.supabase.createClient)
     : null;
 
 // INITIALIZE APP FUNCTIONS AFTER DOM LOADS
-document.addEventListener('DOMContentLoaded', () => {
-    createUserAccount();
-    accountLogin();
-    createStock();
-    marketSetting();
-	dashboardData();
-    cashAccount();
-    buyStock();
-    sellStock();
-    portfolio();
-    transactionHistory();
-    RNG();
-	logout();
-	stocks();
-});
+//document.addEventListener('DOMContentLoaded', () => {
+  //  createUserAccount();
+    //accountLogin();
+ //   createStock();
+ //   marketSetting();
+//	dashboardData();
+  //  cashAccount();
+  //  buyStock();
+ //   sellStock();
+ //   portfolio();
+  //  transactionHistory();
+  //  RNG();
+	//logout();
+	//stocks();
+//});
 
 // GET ACTIVE USER
 function activeUser() {
