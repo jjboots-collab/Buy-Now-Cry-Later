@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Dashboard :) - Buy Now, Cry Later</title>
+    <title>Customer Dashboard - Buy Now, Cry Later</title>
     <link rel="stylesheet" href="./src/css/main.css">
 </head>
 <body>
@@ -18,13 +18,12 @@
         <nav class="main-nav">
             <a class="nav-btn active" href="dashboard.html">Dashboard</a>
             <a class="nav-btn" href="viewstocks.html">View Stocks</a>
-            <a class="nav-btn" href="portfolio.html">PLACEHOLDER</a>
-            <a class="nav-btn" href="history.html">Transaction History</a>
+            <a class="nav-btn" href="transactionhistory.html">Transaction History</a>
         </nav>
     </header>
 
     <main>
-        <!-- Three forms side by side -->
+        <!-- Two forms side by side -->
         <div class="form-row">
             <!-- Deposit or Withdraw Cash -->
             <section class="dashboard-section">
@@ -43,8 +42,6 @@
                 </form>
             </section>
 
-
-
             <!-- Sell Stock -->
             <section class="dashboard-section">
                 <h3>Sell Stock</h3>
@@ -56,8 +53,13 @@
                     <input type="number" id="sellVolume" name="sellVolume" min="1" placeholder="e.g., 5" required>
 
                     <button type="submit">Sell Shares</button>
+                    
+
                 </form>
             </section>
+            
+
+            
         </div>
 
         <hr>
@@ -65,7 +67,7 @@
         <!-- Portfolio Overview -->
         <section class="dashboard-section">
             <h3>Your Portfolio</h3>
-            <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
+            <table border="2" style="width: 100%; text-align: left; border-collapse: collapse;">
                 <thead>
                     <tr>
                         <th>Company Name</th>
@@ -79,32 +81,12 @@
                     </tr>
                 </thead>
                 <tbody id="portfolioTable">
+                
                     <!-- Dynamic Rows Rendered by app.js -->
                 </tbody>
             </table>
         </section>
 
-        <hr>
-
-        <!-- Transaction History -->
-        <section class="dashboard-section">
-            <h3>Transaction History</h3>
-            <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <th>Timestamp</th>
-                        <th>Type</th>
-                        <th>Company Name</th>
-                        <th>Volume</th>
-                        <th>Price/Share</th>
-                        <th>Cash Change</th>
-                    </tr>
-                </thead>
-                <tbody id="historyTable">
-                    <!-- Dynamic Rows Rendered by app.js -->
-                </tbody>
-            </table>
-        </section>
     </main>
 
     <!-- Supabase CDN Library -->
