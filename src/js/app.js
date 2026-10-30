@@ -7,19 +7,19 @@ const supabaseClient = (window.supabase && window.supabase.createClient)
 
 // INITIALIZE APP FUNCTIONS AFTER DOM LOADS
 document.addEventListener('DOMContentLoaded', () => {
-  //  createUserAccount();
+	createUserAccount();
     accountLogin();
- //   createStock();
- //   marketSetting();
-//	dashboardData();
-  //  cashAccount();
-  //  buyStock();
- //   sellStock();
- //   portfolio();
-  //  transactionHistory();
-  //  RNG();
-	//logout();
-	//stocks();
+	createStock();
+	marketSetting();
+	dashboardData();
+	cashAccount();
+	buyStock();
+	sellStock();
+	portfolio();
+	transactionHistory();
+	RNG();
+	logout();
+	stocks();
 });
 
 // GET ACTIVE USER
