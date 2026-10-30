@@ -722,7 +722,7 @@ async function transactionHistory() {
 
         // Send to RPC function to retrieve user transaction history.
         const { data: transactionData, error: error } = await supabaseClient.rpc('get_user_transactions', {
-            DBusername: currentUser.username
+            dbusername: currentUser.username
         });	
 
         // If RPC error, throw error.
