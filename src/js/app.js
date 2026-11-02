@@ -70,6 +70,40 @@ function createUserAccount() {
     });
 }
 
+// GET ACTIVE USER
+async function activeUser() {
+	// Try and catch block.
+	try {
+        // Get the current user from Supabase Auth.
+        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+        
+        // If auth fails or no user exists, return null.
+        if (authError || !user) return null;
+
+        // Get user profile details.
+        const { data: profile, error: profileError } = await supabaseClient
+            .from('users')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+
+        // If profile fetch fails or no profile exists, return null.
+        if (profileError || !profile) return null;
+
+        // Return combined auth and profile data object.
+        return {
+            id: user.id,
+            email: user.email,
+            ...profile
+        };
+    } 
+    // Catch and display errors.
+    catch (e) {
+        console.error('ACTIVE USER ERROR:', e);
+        return null;
+    }
+}
+
 // LOGOUT
 function logout() {
 	// Attach event listener
