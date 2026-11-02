@@ -146,8 +146,8 @@ function accountLogin() {
             const passwordInput = document.getElementById('password').value;
 
 			// Get user email from DB.
-			const { data: profileEmail, error: profileError } = await supabaseClient.rpc('email_lookup', { // << CHANGED
-			    DBusername: usernameInput                                                                      // << CHANGED
+			const { data: profileEmail, error: profileError } = await supabaseClient.rpc('email_lookup', {
+			    DBusername: usernameInput
 			});
 
             if (profileError || !profileEmail) {
