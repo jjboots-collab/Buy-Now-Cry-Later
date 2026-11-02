@@ -13,41 +13,38 @@
     </header>
 
     <main>
-   	 <div class="form-row">
-        <!-- Login Form -->
-        <section class="auth-section">
-            <h2>Log In</h2>
-            <form id="loginForm">
-				<input type="email" id="email" placeholder="Enter your email" required />
-				<input type="password" id="password" placeholder="Enter your password" required />
-				<button type="submit">Login</button>
-            </form>
-        </section>
+        <div class="form-row">
+            <!-- Login Form -->
+            <section class="auth-section">
+                <h2>Log In</h2>
+                <form id="loginForm">
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required />
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required />
+                    <button type="submit">Login</button>
+                </form>
+            </section>
 
+            <!-- User Account Creation Form -->
+            <section class="auth-section">
+                <h2>Create an Account</h2>
+                <form id="registerForm">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="John Doe" required>
 
-        <!-- User Account Creation Form -->
-        <section class="auth-section">
-            <h2>Create an Account</h2>
-            <form id="registerForm">
-                <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" name="fullName" placeholder="John Doe" required>
+                    <label for="regUsername">Username</label>
+                    <input type="text" id="regUsername" name="username" placeholder="johndoe" required>
 
-                <!-- Unique ID matching app.js: regUsername -->
-                <label for="regUsername">Username</label>
-                <input type="text" id="regUsername" name="username" placeholder="johndoe" required>
+                    <label for="regEmail">Email Address</label>
+                    <input type="email" id="regEmail" name="email" placeholder="john@example.com" required>
 
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="john@example.com" required>
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" name="password" placeholder="••••••••" required>
 
-                <!-- Unique ID matching app.js: regPassword -->
-                <label for="regPassword">Password</label>
-                <input type="password" id="regPassword" name="password" placeholder="••••••••" required>
-
-                <button type="submit">Create Account</button>
-            </form>
-        </section>
-    </div>
-    <hr>
+                    <button type="submit">Create Account</button>
+                </form>
+            </section>
+        </div>
+        <hr>
     </main>
 
     <!-- Load Supabase CDN Library First -->
