@@ -168,7 +168,7 @@ function accountLogin() {
             const { data: user, error: userError } = await supabaseClient
                 .from('users')
                 .select('*')
-                .eq('id', result.user.id)
+                .eq('user_id', result.user.id)
                 .single();
 
             if (userError) throw userError;
