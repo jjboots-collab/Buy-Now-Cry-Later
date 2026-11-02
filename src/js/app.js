@@ -146,20 +146,18 @@ function accountLogin() {
             const passwordInput = document.getElementById('password').value;
 
             // Get user email from DB.
-            const { data: profile, error: profileError } = await supabaseClient
-                .from('users')
-                .select('email')
-                .eq('username', usernameInput)
-                .single();
+			const { data: profileEmail, error: profileError } = await supabaseClient.rpc('email_lookup', { // << CHANGED
+                DBusername: usernameInput                                                                      // << CHANGED
+            });
 
-            if (profileError || !profile) {
+            if (profileError || !profileEmail) {
                 alert('Authentication failed: Invalid username or password.');
                 return;
             }
 
             // Send login credentials to Supabase Auth for authentication.
             const { data: result, error: authError } = await supabaseClient.auth.signInWithPassword({
-                email: profile.email,
+                email: profileEmail,
                 password: passwordInput
             });
 
