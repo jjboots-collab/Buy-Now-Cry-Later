@@ -206,15 +206,15 @@ function accountLogin() {
 
             console.log('Attempting lookup for username:', usernameInput);
 
-			// Get user email from DB.
+			// Get user email from DB using lowercase parameter name to match SQL function
 			const { data: profileEmail, error: profileError } = await supabaseClient.rpc('email_lookup', {
-			    DBusername: usernameInput
+			    dbusername: usernameInput
 			});
 
             console.log('Lookup result - Email:', profileEmail, 'Error:', profileError);
 
             if (profileError || !profileEmail) {
-                alert('Authentication failed: Invalid username or password (Lookup Failed).');
+                alert(`Authentication failed: ${profileError?.message || 'No email found for this username.'}`);
                 return;
             }
 
