@@ -228,11 +228,11 @@ function accountLogin() {
 
             if (authError) throw authError;
 
-            // Get user profile data using email instead of user_id
+            // Get user profile data using user_id UUID matching the authenticated session
             const { data: user, error: userError } = await supabaseClient
                 .from('users')
                 .select('*')
-                .eq('email', profileEmail)
+                .eq('user_id', result.user.id)
                 .single();
 
             if (userError) {
