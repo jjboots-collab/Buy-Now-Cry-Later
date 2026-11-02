@@ -127,7 +127,7 @@ function createUserAccount() {
 }
 
 // USER LOGIN
-function accountLogin() {
+/* function accountLogin() {
 	// Attach event listener
 	document.getElementById('loginForm')?.addEventListener('submit', async (event) => {
 		// Stop page reloading or navation defaults.
@@ -188,6 +188,69 @@ function accountLogin() {
         }
     });
 }
+*/
+
+// USER LOGIN WITH DEBUGGING
+function accountLogin() {
+	document.getElementById('loginForm')?.addEventListener('submit', async (event) => {
+		event.preventDefault();
+
+		if (!supabaseClient) {
+			alert('Database connection not available.');
+			return;
+		}
+
+		try {
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInput = document.getElementById('password').value;
+
+            console.log('Attempting lookup for username:', usernameInput);
+
+			// Get user email from DB.
+			const { data: profileEmail, error: profileError } = await supabaseClient.rpc('email_lookup', {
+			    DBusername: usernameInput
+			});
+
+            console.log('Lookup result - Email:', profileEmail, 'Error:', profileError);
+
+            if (profileError || !profileEmail) {
+                alert('Authentication failed: Invalid username or password (Lookup Failed).');
+                return;
+            }
+
+            // Send login credentials to Supabase Auth for authentication.
+            const { data: result, error: authError } = await supabaseClient.auth.signInWithPassword({
+                email: profileEmail,
+                password: passwordInput
+            });
+
+            console.log('Auth result - User:', result?.user, 'Error:', authError);
+
+            if (authError) throw authError;
+
+            // Get user profile data.
+            const { data: user, error: userError } = await supabaseClient
+                .from('users')
+                .select('*')
+                .eq('user_id', result.user.id)
+                .single();
+
+            if (userError) throw userError;
+
+            if (user.role === 'administrator') {
+                window.location.href = 'admin.html';
+            } 
+            else {
+                window.location.href = 'dashboard.html';
+            }
+        } 
+        catch (err) {
+            console.error('Login Catch Error:', err);
+            alert('An error occurred during login.');
+        }
+    });
+}
+
 
 // DASHBOARD DATA INITIALIZATION (cash, transaction, and portfolio)
 function dashboardData() {
