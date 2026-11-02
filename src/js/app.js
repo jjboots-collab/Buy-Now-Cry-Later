@@ -23,11 +23,30 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // GET ACTIVE USER
-function activeUser() {
+async function activeUser() {
     try {
-        return JSON.parse(localStorage.getItem('activeUser'));
+        // Get the current authenticated user from Supabase Auth.
+        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+        if (authError || !user) return null;
+
+        // Fetch user profile details (role, username, cash balance) from the users table.
+        const { data: profile, error: profileError } = await supabaseClient
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+        if (profileError || !profile) return null;
+
+        // Return combined auth and profile data object.
+        return {
+            id: user.id,
+            email: user.email,
+            ...profile
+        };
     } 
     catch (e) {
+        console.error('Active User Error:', e);
         return null;
     }
 }
@@ -40,11 +59,14 @@ function logout() {
 		event.preventDefault();
 			
 		try {
-			// Clear active user data from local storage.
-			localStorage.removeItem('activeUser');
+			// Clear active user from Supabase.
+			const { error: signOutError } = await supabaseClient.auth.signOut();
+			
+			// If signout fails, throw error.
+			if (signOutError) throw signOutError;
 			
 			// Redirect back to the landing page.
-			window.location.replace = 'index.html';
+			window.location.replace('index.html');
 		}
 		
 		// Catch and display errors.
@@ -75,23 +97,21 @@ function createUserAccount() {
             const username = document.getElementById('regUsername').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('regPassword').value;
-
-            // Call RPC function to create user, use DB to signal DB side variable.
-            const { data: result, error: rpcError } = await supabaseClient.rpc('create_user_account', {
-                DBfull_name: fullName,
-                DBusername: username,
-                DBemail: email,
-                DBpassword: password
+			
+			// Register user using Supabase Auth.
+            const { data, error: signUpError } = await supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        full_name: fullName,
+                        username: username
+                    }
+                }                                                                  
             });
 
-            // Throw RPC error.
-            if (rpcError) throw rpcError;
-
-            // If username is already used, display message to try again.
-            if (result && result.success === false) {
-                alert(result.message || 'Username is unavailable, please choose another username.');
-                return;
-            }
+            // Throw signUpError error.
+            if (signUpError) throw signUpError;
 
             // Message to confirm account creation and prompt login.
             alert('Account created successfully! Please log in!');
@@ -125,26 +145,35 @@ function accountLogin() {
             const usernameInput = document.getElementById('username').value.trim();
             const passwordInput = document.getElementById('password').value;
 
-            // Send login credentials to DB RPC for authentication.
-            const { data: result, error: rpcError } = await supabaseClient.rpc('authenticate_user', {
-                DBusername: usernameInput,
-                DBpassword: passwordInput
-            });
+            // Get user email from DB.
+            const { data: profile, error: profileError } = await supabaseClient
+                .from('users')
+                .select('email')
+                .eq('username', usernameInput)
+                .single();
 
-            // Throw RPC error.
-            if (rpcError) throw rpcError;
-
-            // If failed login attempt, display alert.
-            if (!result || result.success === false) {
+            if (profileError || !profile) {
                 alert('Authentication failed: Invalid username or password.');
                 return;
             }
 
-            // Extract user from result.
-            const user = result.user;
+            // Send login credentials to Supabase Auth for authentication.
+            const { data: result, error: authError } = await supabaseClient.auth.signInWithPassword({
+                email: profile.email,
+                password: passwordInput
+            });
 
-            // Store active user.
-            localStorage.setItem('activeUser', JSON.stringify(user));
+            // If authentication fails, throw auth error.
+            if (authError) throw authError;
+
+            // Get user profile data.
+            const { data: user, error: userError } = await supabaseClient
+                .from('users')
+                .select('*')
+                .eq('id', result.user.id)
+                .single();
+
+            if (userError) throw userError;
 
             // Redirect user based on their assigned role.
             if (user.role === 'administrator') {
@@ -169,17 +198,17 @@ function dashboardData() {
         return;
     }
 
-    // Get activeUser.
-    const currentUser = activeUser();
-    if (!currentUser || !currentUser.username) {
-        return;
-    }
-
     // Execute as async.
     (async () => {
+		// Get activeUser.
+        const currentUser = await activeUser();
+        if (!currentUser || !currentUser.username) {
+            return;
+        }
 		
 		// Try and catch block.
         try {
+			
 			// Call RPC function to get user cash balance.
 			const { data: result, error: error } = await supabaseClient.rpc('get_user_cash_balance', {
 				DBusername: currentUser.username
@@ -197,7 +226,8 @@ function dashboardData() {
                     balanceElement.textContent = `$${parseFloat(result.cash_balance).toFixed(2)}`;
                 }
             }
-        } 
+        }
+		
         // Catch and display errors.
         catch (err) {
             console.error('Error loading dashboard data:', err);
@@ -227,7 +257,7 @@ function createStock() {
         // Try and Catch block.			
         try {
             // Verify it is an admin creating the stock.
-            const currentUser = activeUser();
+            const currentUser = await activeUser();
             // If not an admin role, display message.
             if (!currentUser || currentUser.role !== 'administrator') {
                 alert('Administrator authentication required.');
@@ -285,7 +315,7 @@ async function marketSetting() {
         // Try and Catch block.			
         try {
             // Verify it is an admin creating the stock.
-            const currentUser = activeUser();
+            const currentUser = await activeUser();
             // If not an admin role, display message.
             if (!currentUser || currentUser.role !== 'administrator') {
                 alert('Administrator authentication required.');
@@ -361,7 +391,7 @@ function cashAccount() {
 		}
 		
 		// Get activeUser.
-		const currentUser = activeUser();
+		const currentUser = await activeUser();
 		if (!currentUser || !currentUser.username) {
 			alert('No active user found. Please log in.');
 			return;
@@ -430,7 +460,7 @@ function buyStock() {
 			
 		try {
 			// Verify it is an customer buying the stock.
-			const currentUser = activeUser();
+			const currentUser = await activeUser();
 	        // If not a current customer, display message.
 	        if (!currentUser || currentUser.role !== 'customer') {
 	            alert('You must be a registered customer to purchase stocks!');
@@ -517,7 +547,7 @@ function sellStock() {
 		// Try and catch block.	
 		try {
 			// Verify it is an customer selling the stock.
-			const currentUser = activeUser();
+			const currentUser = await activeUser();
 	        // If not a current customer, display message.
 	        if (!currentUser || currentUser.role !== 'customer') {
 	            alert('You must be a registered customer to sell stocks!');
@@ -588,7 +618,7 @@ function sellStock() {
 	});
 }
 
-// PORTFOLIO **set as async
+// PORTFOLIO
 async function portfolio() {
     console.log('PORTFOLIO FUNCTION CALLED');
 
@@ -600,7 +630,7 @@ async function portfolio() {
         
     try {
         // Retrieve active user.
-        const currentUser = activeUser();
+        const currentUser = await activeUser();
         
         // If not a current customer or the current user, stop execution.
         if (!currentUser || currentUser.role !== 'customer') {
@@ -712,7 +742,7 @@ async function transactionHistory() {
 	// Try block.       
     try {
         // Retrieve active user.
-        const currentUser = activeUser();
+        const currentUser = await activeUser();
 				    
         // If not a current customer or the current user, stop execution.
         if (!currentUser || currentUser.role !== 'customer') {
@@ -831,7 +861,7 @@ async function stocks() {
 	// Try block.       
 	try {
 		// Retrieve active user.
-		const currentUser = activeUser();
+		const currentUser = await activeUser();
 				    
 		// If not a current customer or the current user, stop execution.
 		if (!currentUser || currentUser.role !== 'customer') {
