@@ -133,22 +133,22 @@ function accountLogin() {
 		// Stop page reloading or navation defaults.
 		event.preventDefault();
 
-        // Check connection to the DB.
-        if (!supabaseClient) {
-            alert('Database connection not available.');
-            return;
-        }
+		// Check connection to the DB.
+		if (!supabaseClient) {
+			alert('Database connection not available.');
+			return;
+		}
 
-        // Try and catch block.
-        try {
+		// Try and catch block.
+		try {
 			// Read login name and password, remove extra spaces.
             const usernameInput = document.getElementById('username').value.trim();
             const passwordInput = document.getElementById('password').value;
 
-            // Get user email from DB.
+			// Get user email from DB.
 			const { data: profileEmail, error: profileError } = await supabaseClient.rpc('email_lookup', { // << CHANGED
-                DBusername: usernameInput                                                                      // << CHANGED
-            });
+			    DBusername: usernameInput                                                                      // << CHANGED
+			});
 
             if (profileError || !profileEmail) {
                 alert('Authentication failed: Invalid username or password.');
@@ -830,6 +830,15 @@ function RNG() {
 		
 		// Try and Catch block.
 		try {
+			// Check if a user is currently logged in before running RNG.
+			const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+			
+			// If no active user logged in skip RNG.
+			if (sessionError || !session) {
+				// No active session; skip this interval tick quietly
+				return;
+			}
+
 			// If the RPC function returns an error, throw error.
 			const {error} = await supabaseClient.rpc('run_market_rng');
 			if (error) throw error;
