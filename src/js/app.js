@@ -841,7 +841,7 @@ async function stocks() {
 	
 		// Send to RPC function to retrieve stock data.
 		const {data: stockData, error: stockError} = await supabaseClient.rpc('get_stock_data', {
-		    DBusername: currentUser.username
+		    dbusername: currentUser.username
 		});
 		
 		// If RPC error, throw error.
