@@ -228,14 +228,19 @@ function accountLogin() {
 
             if (authError) throw authError;
 
-            // Get user profile data.
+            // Get user profile data using email instead of user_id
             const { data: user, error: userError } = await supabaseClient
                 .from('users')
                 .select('*')
-                .eq('user_id', result.user.id)
+                .eq('email', profileEmail)
                 .single();
 
-            if (userError) throw userError;
+            if (userError) {
+                console.error('User Profile Fetch Error:', userError);
+                throw userError;
+            }
+
+            console.log('User profile loaded:', user);
 
             if (user.role === 'administrator') {
                 window.location.href = 'admin.html';
