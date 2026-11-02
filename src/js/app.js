@@ -77,55 +77,6 @@ function logout() {
 	});
 }
 
-// USER ACCOUNT CREATION
-function createUserAccount() {
-    // Attach event listener
-	document.getElementById('registerForm')?.addEventListener('submit', async (event) => {
-        // Stop page reloading or navation defaults.
-		event.preventDefault();
-
-        // Check connection to the DB.
-        if (!supabaseClient) {
-            alert('Database connection not available.');
-            return;
-        }
-		
-		// Try and Catch block.        
-        try {
-			// Get information from the form.
-            const fullName = document.getElementById('fullName').value.trim();
-            const username = document.getElementById('regUsername').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('regPassword').value;
-			
-			// Register user using Supabase Auth.
-            const { data, error: signUpError } = await supabaseClient.auth.signUp({
-                email: email,
-                password: password,
-                options: {
-                    data: {
-                        full_name: fullName,
-                        username: username
-                    }
-                }                                                                  
-            });
-
-            // Throw signUpError error.
-            if (signUpError) throw signUpError;
-
-            // Message to confirm account creation and prompt login.
-            alert('Account created successfully! Please log in!');
-            window.location.href = 'index.html';
-        } 
-		
-        // Catch and display errors.
-        catch (err) {
-            console.error('Registration Error:', err);
-            alert(`Registration failed: ${err.message || 'Unknown error'}`);
-        }
-    });
-}
-
 // USER LOGIN
 /* function accountLogin() {
 	// Attach event listener
@@ -190,7 +141,7 @@ function createUserAccount() {
 }
 */
 
-// USER LOGIN WITH DEBUGGING
+// USER LOGIN WITH EMAIL & PASSWORD
 function accountLogin() {
 	document.getElementById('loginForm')?.addEventListener('submit', async (event) => {
 		event.preventDefault();
@@ -201,26 +152,15 @@ function accountLogin() {
 		}
 
 		try {
-            const usernameInput = document.getElementById('username').value.trim();
+            // Get email and password directly from form inputs
+            const emailInput = document.getElementById('email').value.trim();
             const passwordInput = document.getElementById('password').value;
 
-            console.log('Attempting lookup for username:', usernameInput);
+            console.log('Attempting login for email:', emailInput);
 
-			// Get user email from DB using lowercase parameter name to match SQL function
-			const { data: profileEmail, error: profileError } = await supabaseClient.rpc('email_lookup', {
-			    dbusername: usernameInput
-			});
-
-            console.log('Lookup result - Email:', profileEmail, 'Error:', profileError);
-
-            if (profileError || !profileEmail) {
-                alert(`Authentication failed: ${profileError?.message || 'No email found for this username.'}`);
-                return;
-            }
-
-            // Send login credentials to Supabase Auth for authentication.
+            // Send login credentials to Supabase Auth
             const { data: result, error: authError } = await supabaseClient.auth.signInWithPassword({
-                email: profileEmail,
+                email: emailInput,
                 password: passwordInput
             });
 
@@ -251,7 +191,7 @@ function accountLogin() {
         } 
         catch (err) {
             console.error('Login Catch Error:', err);
-            alert('An error occurred during login.');
+            alert(`Login failed: ${err.message || 'An error occurred during login.'}`);
         }
     });
 }
