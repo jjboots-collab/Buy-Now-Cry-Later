@@ -146,8 +146,8 @@ function accountLogin() {
 		// Try and catch block.
 		try {
             // Read login email and password, remove extra spaces.
-            const emailInput = document.getElementById('email').value.trim();
-            const passwordInput = document.getElementById('password').value;
+            const emailInput = document.getElementById('loginEmail').value.trim();
+            const passwordInput = document.getElementById('loginPassword').value;
 
             console.log('Attempting login for email:', emailInput);
 
@@ -192,7 +192,6 @@ function accountLogin() {
         }
     });
 }
-
 
 // DASHBOARD DATA INITIALIZATION (cash, transaction, and portfolio)
 function dashboardData() {
@@ -734,7 +733,7 @@ async function portfolio() {
     }
 }
 
-// TRANSACTION HISTORY **set as async
+// TRANSACTION HISTORY
 async function transactionHistory() {
     // Check connection to the DB.
     if (!supabaseClient) {
@@ -862,7 +861,7 @@ function RNG() {
     10000);
 }
 
-// VIEW STOCKS **set as async
+// VIEW STOCKS
 async function stocks() {
 	// Check connection to the DB.
     if (!supabaseClient) {
