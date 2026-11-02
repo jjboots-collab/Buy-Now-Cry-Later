@@ -22,33 +22,52 @@ document.addEventListener('DOMContentLoaded', () => {
 	stocks();
 });
 
-// GET ACTIVE USER
-async function activeUser() {
-    try {
-        // Get the current authenticated user from Supabase Auth.
-        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-        if (authError || !user) return null;
+// USER ACCOUNT CREATION
+function createUserAccount() {
+	// Attach event listener
+	document.getElementById('registerForm')?.addEventListener('submit', async (event) => {
+        // Stop page reloading or navigation defaults.
+		event.preventDefault();
 
-        // Fetch user profile details (role, username, cash balance) from the users table.
-        const { data: profile, error: profileError } = await supabaseClient
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
-            .single();
+		// Check connection to the DB.
+		if (!supabaseClient) {
+			alert('Database connection not available.');
+			return;
+		}
 
-        if (profileError || !profile) return null;
+		// Try and catch block.
+		try {
+            // Read input fields and remove extra spaces.
+            const fullName = document.getElementById('fullName').value.trim();
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
 
-        // Return combined auth and profile data object.
-        return {
-            id: user.id,
-            email: user.email,
-            ...profile
-        };
-    } 
-    catch (e) {
-        console.error('Active User Error:', e);
-        return null;
-    }
+            console.log('Registering user for email:', email);
+
+            // Register user with Supabase Auth and pass user metadata.
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        full_name: fullName,
+                        username: username
+                    }
+                }
+            });
+
+            // If registration fails, throw error.
+            if (error) throw error;
+
+            alert('Account created successfully! Please check your email for confirmation.');
+        } 
+        // Catch and display errors.
+        catch (err) {
+            console.error('REGISTRATION ERROR:', err);
+            alert(`ERROR CREATING ACCOUNT: ${err.message || 'Unknown error in the code'}`);
+        }
+    });
 }
 
 // LOGOUT
@@ -78,10 +97,10 @@ function logout() {
 }
 
 // USER LOGIN
-/* function accountLogin() {
+function accountLogin() {
 	// Attach event listener
 	document.getElementById('loginForm')?.addEventListener('submit', async (event) => {
-		// Stop page reloading or navation defaults.
+		// Stop page reloading or navigation defaults.
 		event.preventDefault();
 
 		// Check connection to the DB.
@@ -92,25 +111,19 @@ function logout() {
 
 		// Try and catch block.
 		try {
-			// Read login name and password, remove extra spaces.
-            const usernameInput = document.getElementById('username').value.trim();
+            // Read login email and password, remove extra spaces.
+            const emailInput = document.getElementById('email').value.trim();
             const passwordInput = document.getElementById('password').value;
 
-			// Get user email from DB.
-			const { data: profileEmail, error: profileError } = await supabaseClient.rpc('email_lookup', {
-			    DBusername: usernameInput
-			});
-
-            if (profileError || !profileEmail) {
-                alert('Authentication failed: Invalid username or password.');
-                return;
-            }
+            console.log('Attempting login for email:', emailInput);
 
             // Send login credentials to Supabase Auth for authentication.
             const { data: result, error: authError } = await supabaseClient.auth.signInWithPassword({
-                email: profileEmail,
+                email: emailInput,
                 password: passwordInput
             });
+
+            console.log('Auth result - User:', result?.user, 'Error:', authError);
 
             // If authentication fails, throw auth error.
             if (authError) throw authError;
@@ -122,7 +135,13 @@ function logout() {
                 .eq('user_id', result.user.id)
                 .single();
 
-            if (userError) throw userError;
+            // If profile fetch fails, throw error.
+            if (userError) {
+                console.error('User Profile Fetch Error:', userError);
+                throw userError;
+            }
+
+            console.log('User profile loaded:', user);
 
             // Redirect user based on their assigned role.
             if (user.role === 'administrator') {
@@ -133,62 +152,6 @@ function logout() {
             }
         } 
         // Catch and display errors.
-        catch (err) {
-            console.error('Login Error:', err);
-            alert('An error occurred during login.');
-        }
-    });
-}
-*/
-
-// USER LOGIN WITH EMAIL & PASSWORD
-function accountLogin() {
-	document.getElementById('loginForm')?.addEventListener('submit', async (event) => {
-		event.preventDefault();
-
-		if (!supabaseClient) {
-			alert('Database connection not available.');
-			return;
-		}
-
-		try {
-            // Get email and password directly from form inputs
-            const emailInput = document.getElementById('email').value.trim();
-            const passwordInput = document.getElementById('password').value;
-
-            console.log('Attempting login for email:', emailInput);
-
-            // Send login credentials to Supabase Auth
-            const { data: result, error: authError } = await supabaseClient.auth.signInWithPassword({
-                email: emailInput,
-                password: passwordInput
-            });
-
-            console.log('Auth result - User:', result?.user, 'Error:', authError);
-
-            if (authError) throw authError;
-
-            // Get user profile data using user_id UUID matching the authenticated session
-            const { data: user, error: userError } = await supabaseClient
-                .from('users')
-                .select('*')
-                .eq('user_id', result.user.id)
-                .single();
-
-            if (userError) {
-                console.error('User Profile Fetch Error:', userError);
-                throw userError;
-            }
-
-            console.log('User profile loaded:', user);
-
-            if (user.role === 'administrator') {
-                window.location.href = 'admin.html';
-            } 
-            else {
-                window.location.href = 'dashboard.html';
-            }
-        } 
         catch (err) {
             console.error('Login Catch Error:', err);
             alert(`Login failed: ${err.message || 'An error occurred during login.'}`);
