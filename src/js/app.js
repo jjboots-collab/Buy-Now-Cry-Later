@@ -955,27 +955,36 @@ async function stocks() {
 
 // INITIALIZE APP FUNCTIONS AFTER DOM LOADS
 document.addEventListener('DOMContentLoaded', () => {
-    // Run global/auth functions.
-    createUserAccount();
-    accountLogin();
+    // Run account creation if the registration form exists on the page.
+    if (document.getElementById('registerForm')) {
+        createUserAccount();
+    }
+
+    // Run login if the login form exists on the page.
+    if (document.getElementById('loginForm')) {
+        accountLogin();
+    }
+
+    // Run buy stock if the buy form exists on the page.
+    if (document.getElementById('buyStockForm')) {
+        buyStock();
+    }
+
     logout();
-    buyStock(); // Make sure your buy stock function is called here too!
-    // RNG(); // UNCOMMENT RNG AFTER DEBUGGING***********************************************
-    // Run other
-    
-    // Run stocks function ONLY if the stocks table is on the current page.
+
+    // Run stocks function if the stocks table is on the page.
     if (document.getElementById('stocksTable')) {
         stocks();
     }
 
-    // Run portfolio & dashboard functions ONLY if the portfolio table is on the current page.
+    // Run portfolio & dashboard functions if the portfolio table is on the current page.
     if (document.getElementById('portfolioTable')) {
         portfolio();
         cashAccount();
         dashboardData();
     }
 
-    // Run transaction history ONLY if the history table exists on this page
+    // Run transaction history if the history table exists on the page
     if (document.getElementById('historyTable')) {
         transactionHistory();
     }
