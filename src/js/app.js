@@ -646,7 +646,7 @@ function sellStock() {
 			document.getElementById('sellStockForm').reset();
 			
 			// Reload the dashboardData.
-			portfolio();
+			location.reload();
 		}
 		
 		// Catch and display errors.
