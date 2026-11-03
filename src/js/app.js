@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	sellStock();
 	portfolio();
 	transactionHistory();
-	RNG();
+	// RNG();
 	logout();
 	stocks();
 });
