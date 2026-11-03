@@ -736,6 +736,14 @@ async function portfolio() {
 
 // TRANSACTION HISTORY
 async function transactionHistory() {
+    // Get the table element for transactions first, before any async calls.
+    const transactionTableElement = document.getElementById('historyTable');
+
+    // If table element does not exist on the page, stop execution immediately.
+    if (!transactionTableElement) {
+        return;
+    }
+
     // Check connection to the DB.
     if (!supabaseClient) {
         alert('Database connection not available.');
@@ -761,15 +769,6 @@ async function transactionHistory() {
         // If RPC error, throw error.
         if (error) {
             throw error;
-        }
-
-        // Get the table element for transactions.
-        const transactionTableElement = document.getElementById('historyTable');
-
-        // If table element does not exist on the page, stop execution.
-        if (!transactionTableElement) {
-            console.log('TRANSACTION TABLE ELEMENT NOT FOUND IN DOM');
-            return;
         }
 
         // Initialize variable to hold HTML row.
