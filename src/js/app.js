@@ -989,6 +989,11 @@ document.addEventListener('DOMContentLoaded', () => {
         buyStock();
     }
 	
+	// Run sellStock if sellStockForm is on the page.
+    if (document.getElementById('sellStockForm')) {
+        sellStock();
+    }
+	
 	// Logout and navigate to index and clear local data on button press.
     logout();
 
