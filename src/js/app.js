@@ -546,10 +546,13 @@ function buyStock() {
 				alert(executeResult.message || 'Stock purchase failed.');
 				return;
 			}
+			
+			// Display success message.
+			alert(`Successfully purchased ${buyVolume} shares of ${buyTicker}!`);
 				
 			// Reset the form elements and reload the page.
 			document.getElementById('buyStockForm').reset();
-			location.reload();
+			//location.reload();
 		}
 		
 		// Catch and display errors.
@@ -633,6 +636,9 @@ function sellStock() {
 				alert(executeResult.message || 'Stock sale failed.');
 				return;
 			}
+			
+			// Display success message
+			alert(`Successfully sold ${sellVolume} shares of ${sellTicker}!`);
 			
 			// Reset the form elements and reload the page.
 			document.getElementById('sellStockForm').reset();
