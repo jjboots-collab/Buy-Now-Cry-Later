@@ -741,10 +741,10 @@ async function portfolio() {
                         <td>${ticker}</td>
                         <td>$${singleStockPrice.toFixed(2)}</td>
                         <td>${availableVol}</td>
+						<td>${sharesOwned}</td>
                         <td>$${marketValue.toFixed(2)}</td>
                         <td>$${dailyHigh.toFixed(2)}</td>
-                        <td>$${dailyLow.toFixed(2)}</td>
-                        <td>${sharesOwned}</td>
+                        <td>$${dailyLow.toFixed(2)}</td>                        
                     </tr>
                 `;
             }
