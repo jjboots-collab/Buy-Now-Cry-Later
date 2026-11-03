@@ -989,6 +989,11 @@ document.addEventListener('DOMContentLoaded', () => {
         buyStock();
     }
 	
+	// Run cashAccount if the cashForm is on the page.
+    if (document.getElementById('cashForm')) {
+        cashAccount();
+    }
+	
 	// Run sellStock if sellStockForm is on the page.
     if (document.getElementById('sellStockForm')) {
         sellStock();
