@@ -741,7 +741,6 @@ async function transactionHistory() {
 
     // If table element does not exist on the page, stop execution immediately.
     if (!transactionTableElement) {
-        console.log('DEBUG: historyTable not found on this page. Exiting transactionHistory().');
         return;
     }
 
@@ -755,28 +754,22 @@ async function transactionHistory() {
     try {
         // Retrieve active user.
         const currentUser = await activeUser();
-        console.log('DEBUG: Current user object retrieved:', currentUser);
 				    
         // If not a current customer or the current user, stop execution.
         if (!currentUser || currentUser.role !== 'customer') {
-            console.log('ACTION STOPPED: User is not a valid customer or not logged in.');
+            console.log('ACTION STOPPED: User is not a valid customer.');
             return;
         }		
 
         // Send to RPC function to retrieve user transaction history.
-        console.log('DEBUG: Calling get_user_transactions for username:', currentUser.username);
         const { data: transactionData, error: error } = await supabaseClient.rpc('get_user_transactions', {
             DBusername: currentUser.username
         });	
 
         // If RPC error, throw error.
         if (error) {
-            console.error('DEBUG: Supabase RPC returned an error:', error);
             throw error;
         }
-
-        // Log what data was actually returned from the database
-        console.log('DEBUG: Raw transaction data received:', transactionData);
 
         // Initialize variable to hold HTML row.
         let rowsHTML = '';
@@ -813,7 +806,6 @@ async function transactionHistory() {
         }
 		
         else {
-            console.log('DEBUG: transactionData is empty or null.');
             // If user has no transactions, display message.
             rowsHTML = `
                 <tr>
