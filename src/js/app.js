@@ -85,7 +85,7 @@ async function activeUser() {
             .from('users')
             .select('*')
             .eq('user_id', user.id)
-            .single();
+            .maybeSingle();
 
         // If profile fetch fails or no profile exists, return null.
         if (profileError || !profile) return null;
