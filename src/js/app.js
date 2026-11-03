@@ -953,37 +953,42 @@ async function stocks() {
 
 // INITIALIZE APP FUNCTIONS (After DOM and only when the form is displayed)
 document.addEventListener('DOMContentLoaded', () => {
-    // Run account creation if the registration form exists on the page.
+    // Run createUserAccount if the registerForm is on the page.
     if (document.getElementById('registerForm')) {
         createUserAccount();
     }
 
-    // Run login if the login form exists on the page.
+    // Run accountLogin if the loginForm is on the page.
     if (document.getElementById('loginForm')) {
         accountLogin();
     }
 
-    // Run buy stock if the buy form exists on the page.
-    if (document.getElementById('buyStockForm')) {
+    // Run buyStock if buyStock form is on the page.
+    if (document.getElementById('buyStock')) {
         buyStock();
     }
 
     logout();
 
-    // Run stocks function if the stocks table is on the page.
+    // Run stocks if the stocksTable is on the page.
     if (document.getElementById('stocksTable')) {
         stocks();
     }
 
-    // Run portfolio & dashboard functions if the portfolio table is on the current page.
+    // Run portfolio, dashboardData, and cashAccount if they are on the page.
     if (document.getElementById('portfolioTable')) {
         portfolio();
         cashAccount();
         dashboardData();
     }
 
-    // Run transaction history if the history table exists on the page
+    // Run transactionHistory if historyTable is on the page
     if (document.getElementById('historyTable')) {
         transactionHistory();
     }
+	
+	// Run createStock if it is on the page.
+	if (document.getElementById('createStockForm')) {
+	    createStock();
+	}
 });
