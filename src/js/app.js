@@ -243,8 +243,8 @@ function dashboardData() {
 		// Load Transaction data.
 		//transactionHistory()
 }
-
-// CREATE STOCK
+/*
+// CREATE STOCK ORIGINAL
 function createStock() {
 	// Attach event listener
 	document.getElementById('createStockForm')?.addEventListener('submit', async (event) => {
@@ -301,6 +301,78 @@ function createStock() {
         }
     });
 }
+*/
+
+// DEBUGGING CODE DELETE AFTER DEBUGGING *************************************************
+// CREATE STOCK
+function createStock() {
+    // Explicitly grab the form element to debug binding
+    const form = document.getElementById('createStockForm');
+    
+    if (!form) {
+        console.log('DEBUG: createStockForm element was NOT found in the DOM.');
+        return;
+    }
+
+    console.log('DEBUG: createStockForm found, attaching submit listener...');
+
+	// Attach event listener directly to the verified form element
+	form.addEventListener('submit', async (event) => {
+		// Stop page reloading or navigation defaults.
+		event.preventDefault();
+        console.log('DEBUG: Create stock form submitted, preventDefault active.');
+
+        // Check connection to the DB.
+        if (!supabaseClient) {
+            alert('Database connection not available.');
+            return;
+        }
+		
+        // Try and Catch block.			
+        try {
+            // Verify it is an admin creating the stock.
+            const currentUser = await activeUser();
+            // If not an admin role, display message.
+            if (!currentUser || currentUser.role !== 'administrator') {
+                alert('Administrator authentication required.');
+                return;
+            }
+
+            // Get stock info from the form.
+            const companyName = document.getElementById('companyName').value.trim();
+            const ticker = document.getElementById('stockTicker').value.trim().toUpperCase();
+            const volume = parseInt(document.getElementById('stockVolume').value, 10);
+            const price = parseFloat(document.getElementById('initialPrice').value);
+
+            // Call RPC function to create stock.
+            const { data: result, error: rpcError } = await supabaseClient.rpc('create_stock', {
+                DBcompany_name: companyName,
+                DBticker: ticker,
+                DBvolume: volume,
+                DBprice: price
+            });
+
+            // If the RPC call results in an error, throw error.
+            if (rpcError) throw rpcError;
+
+            // If the stock already exists or creation failed, display alert.
+            if (result && result.success === false) {
+                alert(result.message || 'Stock Company name or ticker already exists.');
+                return;
+            }
+
+            // If no error from the DB, show stock created message.
+            alert(`Stock ${ticker} created successfully!`);
+            form.reset();
+        }
+        // Catch and display errors.
+        catch (err) {
+            console.error('Stock Creation Error:', err);
+            alert(`Error creating stock: ${err.message || 'Unknown error inside the code'}`);
+        }
+    });
+}
+
 
 // MARKET SETTING
 async function marketSetting() {
