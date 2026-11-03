@@ -636,7 +636,7 @@ function sellStock() {
 			
 			// Reset the form elements and reload the page.
 			document.getElementById('sellStockForm').reset();
-			location.reload();
+			// location.reload();
 		}
 		
 		// Catch and display errors.
