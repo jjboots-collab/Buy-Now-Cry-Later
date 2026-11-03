@@ -303,20 +303,13 @@ function createStock() {
 }
 */
 
-// DEBUGGING CODE DELETE AFTER DEBUGGING *************************************************
+
 // CREATE STOCK
 function createStock() {
     // Explicitly grab the form element to debug binding
     const form = document.getElementById('createStockForm');
-    
-    if (!form) {
-        console.log('DEBUG: createStockForm element was NOT found in the DOM.');
-        return;
-    }
-
-    console.log('DEBUG: createStockForm found, attaching submit listener...');
-
-	// Attach event listener directly to the verified form element
+	
+	// Attach event listener.
 	form.addEventListener('submit', async (event) => {
 		// Stop page reloading or navigation defaults.
 		event.preventDefault();
@@ -332,6 +325,7 @@ function createStock() {
         try {
             // Verify it is an admin creating the stock.
             const currentUser = await activeUser();
+			
             // If not an admin role, display message.
             if (!currentUser || currentUser.role !== 'administrator') {
                 alert('Administrator authentication required.');
