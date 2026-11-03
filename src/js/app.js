@@ -554,7 +554,7 @@ function buyStock() {
 			document.getElementById('buyStockForm').reset();
 
 			// Reload the dashboardData.
-			dashboardData();
+			portfolio();
 		}
 		
 		// Catch and display errors.
@@ -646,7 +646,7 @@ function sellStock() {
 			document.getElementById('sellStockForm').reset();
 			
 			// Reload the dashboardData.
-			dashboardData();
+			portfolio();
 		}
 		
 		// Catch and display errors.
