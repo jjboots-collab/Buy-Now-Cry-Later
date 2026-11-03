@@ -7,16 +7,30 @@ const supabaseClient = (window.supabase && window.supabase.createClient)
 
 // INITIALIZE APP FUNCTIONS AFTER DOM LOADS
 document.addEventListener('DOMContentLoaded', () => {
-    // Run global functions.
+    // Run global/auth functions.
+    createUserAccount();
     accountLogin();
     logout();
-    // RNG();
-	stocks();
-	portfolio();
-	cashAccount();
-	dashboardData(); 
-	transactionHistory();
-	createUserAccount();
+    buyStock(); // Make sure your buy stock function is called here too!
+    // RNG(); // UNCOMMENT RNG AFTER DEBUGGING***********************************************
+    // Run other
+    
+    // Run stocks function ONLY if the stocks table is on the current page.
+    if (document.getElementById('stocksTable')) {
+        stocks();
+    }
+
+    // Run portfolio & dashboard functions ONLY if the portfolio table is on the current page.
+    if (document.getElementById('portfolioTable')) {
+        portfolio();
+        cashAccount();
+        dashboardData();
+    }
+
+    // Run transaction history ONLY if the history table exists on this page
+    if (document.getElementById('historyTable')) {
+        transactionHistory();
+    }
 });
 
 // USER ACCOUNT CREATION
