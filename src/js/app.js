@@ -843,7 +843,7 @@ async function transactionHistory() {
     }
 }
 
-
+/*
 // RANDOM NUMBER GENERATOR
 function RNG() {
 	// Check for DB connection.
@@ -880,7 +880,7 @@ function RNG() {
 	// Set RNG to run every 10 seconds.
     10000);
 }
-
+*/
 
 // VIEW STOCKS
 async function stocks() {
