@@ -540,6 +540,8 @@ function buyStock() {
 				DBusername: currentUser.username
 			});
 			
+			console.log("DEBUG executeResult:", executeResult);
+			
 			// If RPC error, throw error.
 			if (executeError) {
 				throw executeError;
