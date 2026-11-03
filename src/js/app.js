@@ -14,16 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	stocks();
 	portfolio();
 	cashAccount();
-
-    // Run if html calls it.
-    if (document.getElementById('portfolioTable')) {
-        dashboardData();                     
-    }
-
-    // // Run if html calls it.
-    if (document.getElementById('historyTable')) {
-        transactionHistory();
-    }
+	dashboardData(); 
+	transactionHistory();
 });
 
 // USER ACCOUNT CREATION
