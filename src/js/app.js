@@ -978,7 +978,7 @@ async function stocks() {
     }
 }
 
-// INITIALIZE APP FUNCTIONS (After DOM and only when the form is displayed)
+// INITIALIZE APP FUNCTIONS (After DOM and only when the forms are displayed)
 document.addEventListener('DOMContentLoaded', () => {
     // Run createUserAccount if the registerForm is on the page.
     if (document.getElementById('registerForm')) {
@@ -990,23 +990,27 @@ document.addEventListener('DOMContentLoaded', () => {
         accountLogin();
     }
 
-    // Run buyStock if buyStock form is on the page.
+    // Run buyStock if buyStockForm is on the page.
     if (document.getElementById('buyStockForm')) {
         buyStock();
     }
 	
-	// Logout to index and clear local data on button press.
+	// Logout/navigate to index and clear local data on button press.
     logout();
+
+    // Run cashAccount if userCashDisplay is on the page.
+    if (document.getElementById('userCashDisplay')) {
+        cashAccount();
+    }
 
     // Run stocks if the stocksTable is on the page.
     if (document.getElementById('stocksTable')) {
         stocks();
     }
 
-    // Run portfolio, dashboardData, and cashAccount if they are on the page.
+    // Run portfolio and dashboardData if portfolioTable is on the page.
     if (document.getElementById('portfolioTable')) {
         portfolio();
-        cashAccount();
         dashboardData();
     }
 
