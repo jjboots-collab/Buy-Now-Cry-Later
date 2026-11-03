@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Run global functions.
     accountLogin();
     logout();
-    RNG();
+    // RNG();
 
     // Run if html calls it.
     if (document.getElementById('portfolioTable')) {
