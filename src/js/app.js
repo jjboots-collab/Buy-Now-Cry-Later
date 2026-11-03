@@ -873,6 +873,14 @@ function RNG() {
 
 // VIEW STOCKS
 async function stocks() {
+    // Get the table element first, before any async calls.
+    const viewStocks = document.getElementById('stocksTable');
+    
+    // If table element does not exist on this page, stop execution immediately.
+    if (!viewStocks) {
+        return;
+    }
+
 	// Check connection to the DB.
     if (!supabaseClient) {
         alert('Database connection not available.');
@@ -899,9 +907,6 @@ async function stocks() {
         if (stockError) {
             throw stockError;
         }
-		
-		// Get the table element for transactions.
-		const viewStocks = document.getElementById('stocksTable');
 		
 		// Initialize variable to hold HTML row.
 		let rowsHTML = '';
@@ -930,12 +935,17 @@ async function stocks() {
 		            </tr>
 		        `;
 		    }
-		}
+		} else {
+            rowsHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center;">No stocks available.</td>
+                </tr>
+            `;
+        }
 		
 		// Insert rows into the table.
 		viewStocks.innerHTML = rowsHTML;
 	}
-	
 	
 	// Catch and display errors.
     catch (err) {
