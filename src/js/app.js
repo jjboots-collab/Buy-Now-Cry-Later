@@ -20,28 +20,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // USER ACCOUNT CREATION
 function createUserAccount() {
-	// Attach event listener
-	document.getElementById('registerForm')?.addEventListener('submit', async (event) => {
+    // Set form name to get elements.
+    const registerForm = document.getElementById('registerForm');
+
+    // If form is not loaded stop execution.
+    if (!registerForm) {
+        console.log('The issue is the form doesn;t exist on the page yet');
+        return;
+    }
+
+    // Attach event listener.
+    registerForm.addEventListener('submit', async (event) => {
         // Stop page reloading or navigation defaults.
-		event.preventDefault();
+        event.preventDefault();
 
-		// Check connection to the DB.
-		if (!supabaseClient) {
-			alert('Database connection not available.');
-			return;
-		}
-
-		// Try and catch block.
-		try {
+        // Check connection to the DB.
+        if (!supabaseClient) {
+            alert('Database connection not available.');
+            return;
+        }       
+        
+        // Try block.       
+        try {
             // Read input fields and remove extra spaces.
             const fullName = document.getElementById('fullName').value.trim();
             const username = document.getElementById('regUsername').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const password = document.getElementById('regPassword').value;
-
+			
+			// DEBUG: make sure the email is registered
             console.log('Registering user for email:', email);
 
-            // Register user with Supabase Auth and pass user metadata.
+            // Register user with Supabase Auth.
             const { data, error } = await supabaseClient.auth.signUp({
                 email: email,
                 password: password,
@@ -53,14 +63,17 @@ function createUserAccount() {
                 }
             });
 
-            // If registration fails, throw error.
-            if (error) throw error;
+            // If registration error, throw error.
+            if (error) {
+                throw error;
+            }
 
-            alert('Account created successfully! Please check your email for confirmation.');
-        } 
+            // Display success message.
+            alert('Account created successfully! Please log in!');
+        }
         // Catch and display errors.
         catch (err) {
-            console.error('REGISTRATION ERROR:', err);
+            console.error('REGISTRATION CATCH BLOCK ERROR:', err);
             alert(`ERROR CREATING ACCOUNT: ${err.message || 'Unknown error in the code'}`);
         }
     });
