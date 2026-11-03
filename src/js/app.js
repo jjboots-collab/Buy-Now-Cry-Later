@@ -861,7 +861,6 @@ async function transactionHistory() {
     }
 }
 
-/*
 // RANDOM NUMBER GENERATOR
 function RNG() {
 	// Check for DB connection.
@@ -898,7 +897,6 @@ function RNG() {
 	// Set RNG to run every 10 seconds.
     10000);
 }
-*/
 
 // VIEW STOCKS
 async function stocks() {
@@ -985,7 +983,14 @@ async function stocks() {
 
 // INITIALIZE APP FUNCTIONS (After DOM and only when elements are displayed)
 document.addEventListener('DOMContentLoaded', () => {
-    // Run createUserAccount if the registerForm is on the page.
+    
+	// Logout button and navigate to index and clear local data on button press.
+    logout();
+	
+	// Run RNG (every 10 seconds)
+	RNG();
+	
+	// Run createUserAccount if the registerForm is on the page.
     if (document.getElementById('registerForm')) {
         createUserAccount();
     }
@@ -1008,10 +1013,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Run sellStock if sellStockForm is on the page.
     if (document.getElementById('sellStockForm')) {
         sellStock();
-    }
-	
-	// Logout and navigate to index and clear local data on button press.
-    logout();
+    }	
 
     // Run dashboardData if userCashDisplay is on the page.
     if (document.getElementById('userCashDisplay')) {
