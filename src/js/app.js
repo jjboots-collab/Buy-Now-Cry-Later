@@ -638,7 +638,7 @@ function sellStock() {
 			}
 			
 			// Display success message
-			//alert(`Successfully sold ${sellVolume} shares of ${sellTicker}!`);
+			alert(`Successfully sold ${sellVolume} shares of ${sellTicker}!`);
 			
 			// Reset the form elements and reload the page.
 			document.getElementById('sellStockForm').reset();
