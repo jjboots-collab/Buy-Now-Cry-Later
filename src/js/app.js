@@ -834,6 +834,7 @@ async function transactionHistory() {
 						<td>${companyName || '-'}</td>
 						<td>${ticker || '-'}</td>
 						<td>${pricePerShare != null ? '$' + Number(pricePerShare).toFixed(2) : '-'}</td>
+						<td>${item.volume}</td>
 						<td>${amount != null ? '$' + Number(amount).toFixed(2) : '$0.00'}</td>
 						<td>$${cashChange != null ? Number(cashChange).toFixed(2) : '0.00'}</td>
                     </tr>
