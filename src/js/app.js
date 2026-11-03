@@ -997,11 +997,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	
 	// Logout/navigate to index and clear local data on button press.
     logout();
-
+	cashAccount();
     // Run cashAccount if userCashDisplay is on the page.
-    if (document.getElementById('userCashDisplay')) {
-        cashAccount();
-    }
+    //if (document.getElementById('userCashDisplay')) {
+    //    
+   // }
 
     // Run stocks if the stocksTable is on the page.
     if (document.getElementById('stocksTable')) {
