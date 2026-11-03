@@ -5,8 +5,6 @@ const supabaseClient = (window.supabase && window.supabase.createClient)
     ? window.supabase.createClient(supabaseUrl, supabaseKey)
     : null;
 
-
-
 // USER ACCOUNT CREATION
 function createUserAccount() {
     // Set form name to get elements.
@@ -37,7 +35,7 @@ function createUserAccount() {
             const email = document.getElementById('regEmail').value.trim();
             const password = document.getElementById('regPassword').value;
 			
-			// DEBUG: make sure the email is registered
+			// DEBUG: make sure the email registeration is called.
             console.log('Registering user for email:', email);
 
             // Register user with Supabase Auth.
@@ -953,7 +951,7 @@ async function stocks() {
     }
 }
 
-// INITIALIZE APP FUNCTIONS AFTER DOM LOADS
+// INITIALIZE APP FUNCTIONS (After DOM and only when the form is displayed)
 document.addEventListener('DOMContentLoaded', () => {
     // Run account creation if the registration form exists on the page.
     if (document.getElementById('registerForm')) {
