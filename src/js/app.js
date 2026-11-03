@@ -236,12 +236,6 @@ function dashboardData() {
             console.error('Error loading dashboard data:', err);
         }
     })();
-	
-		// Load portfolio data.
-	    //portfolio();
-	
-		// Load Transaction data.
-		//transactionHistory()
 }
 
 // CREATE STOCK
@@ -978,7 +972,7 @@ async function stocks() {
     }
 }
 
-// INITIALIZE APP FUNCTIONS (After DOM and only when the forms are displayed)
+// INITIALIZE APP FUNCTIONS (After DOM and only when elements are displayed)
 document.addEventListener('DOMContentLoaded', () => {
     // Run createUserAccount if the registerForm is on the page.
     if (document.getElementById('registerForm')) {
@@ -995,23 +989,22 @@ document.addEventListener('DOMContentLoaded', () => {
         buyStock();
     }
 	
-	// Logout/navigate to index and clear local data on button press.
+	// Logout and navigate to index and clear local data on button press.
     logout();
-	cashAccount();
-    // Run cashAccount if userCashDisplay is on the page.
-    //if (document.getElementById('userCashDisplay')) {
-    //    
-   // }
+
+    // Run dashboardData if userCashDisplay is on the page.
+    if (document.getElementById('userCashDisplay')) {
+        dashboardData();
+    }
 
     // Run stocks if the stocksTable is on the page.
     if (document.getElementById('stocksTable')) {
         stocks();
     }
 
-    // Run portfolio and dashboardData if portfolioTable is on the page.
+    // Run portfolio if the portfolioTable is on the page.
     if (document.getElementById('portfolioTable')) {
         portfolio();
-        dashboardData();
     }
 
     // Run transactionHistory if historyTable is on the page
