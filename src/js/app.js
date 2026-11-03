@@ -991,7 +991,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Run buyStock if buyStock form is on the page.
-    if (document.getElementById('buyStock')) {
+    if (document.getElementById('buyStockForm')) {
         buyStock();
     }
 	
