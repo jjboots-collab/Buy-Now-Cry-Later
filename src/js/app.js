@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	cashAccount();
 	dashboardData(); 
 	transactionHistory();
+	createUserAccount();
 });
 
 // USER ACCOUNT CREATION
