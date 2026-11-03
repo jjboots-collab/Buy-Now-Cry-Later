@@ -973,7 +973,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('buyStock')) {
         buyStock();
     }
-
+	
+	// Logout to index and clear local data on button press.
     logout();
 
     // Run stocks if the stocksTable is on the page.
@@ -996,5 +997,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Run createStock if it is on the page.
 	if (document.getElementById('createStockForm')) {
 	    createStock();
+	}
+	
+	// Run marketSetting if the marketSettingsForm is on the page.
+	if (document.getElementById('marketSettingsForm')) {
+	    marketSetting();
 	}
 });
