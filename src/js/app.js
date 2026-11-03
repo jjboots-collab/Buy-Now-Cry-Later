@@ -5,33 +5,7 @@ const supabaseClient = (window.supabase && window.supabase.createClient)
     ? window.supabase.createClient(supabaseUrl, supabaseKey)
     : null;
 
-// INITIALIZE APP FUNCTIONS AFTER DOM LOADS
-document.addEventListener('DOMContentLoaded', () => {
-    // Run global/auth functions.
-    createUserAccount();
-    accountLogin();
-    logout();
-    buyStock(); // Make sure your buy stock function is called here too!
-    // RNG(); // UNCOMMENT RNG AFTER DEBUGGING***********************************************
-    // Run other
-    
-    // Run stocks function ONLY if the stocks table is on the current page.
-    if (document.getElementById('stocksTable')) {
-        stocks();
-    }
 
-    // Run portfolio & dashboard functions ONLY if the portfolio table is on the current page.
-    if (document.getElementById('portfolioTable')) {
-        portfolio();
-        cashAccount();
-        dashboardData();
-    }
-
-    // Run transaction history ONLY if the history table exists on this page
-    if (document.getElementById('historyTable')) {
-        transactionHistory();
-    }
-});
 
 // USER ACCOUNT CREATION
 function createUserAccount() {
@@ -978,3 +952,31 @@ async function stocks() {
         alert(`THE RPC THREW AN ERROR: ${err.message || 'Unknown error in the code'}`);
     }
 }
+
+// INITIALIZE APP FUNCTIONS AFTER DOM LOADS
+document.addEventListener('DOMContentLoaded', () => {
+    // Run global/auth functions.
+    createUserAccount();
+    accountLogin();
+    logout();
+    buyStock(); // Make sure your buy stock function is called here too!
+    // RNG(); // UNCOMMENT RNG AFTER DEBUGGING***********************************************
+    // Run other
+    
+    // Run stocks function ONLY if the stocks table is on the current page.
+    if (document.getElementById('stocksTable')) {
+        stocks();
+    }
+
+    // Run portfolio & dashboard functions ONLY if the portfolio table is on the current page.
+    if (document.getElementById('portfolioTable')) {
+        portfolio();
+        cashAccount();
+        dashboardData();
+    }
+
+    // Run transaction history ONLY if the history table exists on this page
+    if (document.getElementById('historyTable')) {
+        transactionHistory();
+    }
+});
