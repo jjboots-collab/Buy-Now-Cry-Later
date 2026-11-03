@@ -466,7 +466,7 @@ function cashAccount() {
 function buyStock() {
 	// Attach event listener
 	document.getElementById('buyStockForm')?.addEventListener('submit', async (event) => {
-        // Stop page reloading or navation defaults.
+        // Stop page reloading or navigation defaults.
 		event.preventDefault();
 			
 		// Check connection to the DB.
@@ -475,8 +475,9 @@ function buyStock() {
 		    return;
 		}		
 			
+		// Try block.
 		try {
-			// Verify it is an customer buying the stock.
+			// Verify it is a customer buying the stock.
 			const currentUser = await activeUser();
 	        // If not a current customer, display message.
 	        if (!currentUser || currentUser.role !== 'customer') {
@@ -501,12 +502,14 @@ function buyStock() {
 				DBusername: currentUser.username
 			});
 			
-			// If RPC error, throw error
-			if (checkError) throw checkError;
+			// If RPC error, throw error.
+			if (checkError) {
+				throw checkError;
+			}
 			
-			// Display alert for failed RPC funtion.
+			// Display alert for failed RPC function.
 			if (!checkResult || checkResult.success === false) {
-				alert(checkResult.message || 'Unable to process purchase.');
+				alert(checkResult.message || 'Unable to process purchase, RPC error.');
 				return;
 			}
 
@@ -527,7 +530,9 @@ function buyStock() {
 			});
 			
 			// If RPC error, throw error.
-			if (executeError) throw executeError;
+			if (executeError) {
+				throw executeError;
+			}
 			
 			// Display alert for failed purchase.
 			if (!executeResult || executeResult.success === false) {
@@ -546,7 +551,7 @@ function buyStock() {
     		alert(`ERROR BUYING STOCK: ${err.message || 'Unknown error in the code'}`);
 		}
 	});
-}	
+}
 
 // SELL STOCK
 function sellStock() {
