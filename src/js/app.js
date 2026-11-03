@@ -323,7 +323,7 @@ async function marketSetting() {
 		
         // Try and Catch block.			
         try {
-            // Verify it is an admin creating the stock.
+            // Verify it is an admin updating the settings.
             const currentUser = await activeUser();
             // If not an admin role, display message.
             if (!currentUser || currentUser.role !== 'administrator') {
@@ -331,48 +331,67 @@ async function marketSetting() {
                 return;
             }
 
+            // Track if any changes were made.
+            let updatesCount = 0;
+
             // Get market open and close time from the form, remove whitespace.
             const openTime = document.getElementById('openTime').value.trim();
             const closeTime = document.getElementById('closeTime').value.trim();
 			
-			// Call RPC function to update the market_settings table for time.
-			const {data: times, error: timesError} = await supabaseClient.rpc('set_hours', {
-                DBopenTime: openTime,
-                DBcloseTime: closeTime,
-            });
+            // If both time fields are filled, call RPC function to update market_settings time.
+            if (openTime && closeTime) {
+                const { error: timesError } = await supabaseClient.rpc('set_hours', {
+                    DBopenTime: openTime,
+                    DBcloseTime: closeTime,
+                });
+                
+                // If RPC returns error, throw error.
+                if (timesError) throw timesError;
+                updatesCount++;
+            } else if (openTime || closeTime) {
+                alert('Both opening and closing times must be provided together if updating market hours.');
+                return;
+            }
 			
-			// If RPC returns error, throw error.
-			if (timesError) throw timesError;
-			
-			// Get and set HTML checkbox boolean for open days.
-			const monday = document.getElementById('monday')?.checked || false;
-			const tuesday = document.getElementById('tuesday')?.checked || false;
-			const wednesday = document.getElementById('wednesday')?.checked || false;
-			const thursday = document.getElementById('thursday')?.checked || false;
-			const friday = document.getElementById('friday')?.checked || false;
-			
-			// Call RPC function to update operational_days.
-            const {data: days, error: daysError} = await supabaseClient.rpc('set_days', {
+            // Get and set HTML checkbox boolean for open days.
+            const monday = document.getElementById('monday')?.checked || false;
+            const tuesday = document.getElementById('tuesday')?.checked || false;
+            const wednesday = document.getElementById('wednesday')?.checked || false;
+            const thursday = document.getElementById('thursday')?.checked || false;
+            const friday = document.getElementById('friday')?.checked || false;
+            
+            // Call RPC function to update operational_days.
+            const { error: daysError } = await supabaseClient.rpc('set_days', {
                 DBmonday: monday,
                 DBtuesday: tuesday,
                 DBwednesday: wednesday,
                 DBthursday: thursday,
-				DBfriday: friday,
+                DBfriday: friday,
             });
 
             // If the RPC call results in an error, throw error.
             if (daysError) throw daysError;
+            updatesCount++;
 			
-			// Get comma seperated list of holidays from the form.
-			const holidayDates = document.getElementById('holidayDates')?.value.trim();
-			
-			// Call RPC function to update holidays in the market_settings table.
-			const {data: holidays, error: holidaysError} = await supabaseClient.rpc('set_holidays', {
-				DBholidays: holidayDates
-			})
+            // Get comma seperated list of holidays from the form.
+            const holidayDates = document.getElementById('holidayDates')?.value.trim();
+            
+            // Call RPC function to update holidays in the market_settings table if provided.
+            if (holidayDates) {
+                const { error: holidaysError } = await supabaseClient.rpc('set_holidays', {
+                    DBholidays: holidayDates
+                });
 
-			// If the RPC call results in an error, throw error.
-			if (holidaysError) throw holidaysError;
+                // If the RPC call results in an error, throw error.
+                if (holidaysError) throw holidaysError;
+                updatesCount++;
+            }
+
+            // Ensure at least something was modified.
+            if (updatesCount === 0) {
+                alert('Please modify at least one field before submitting.');
+                return;
+            }
 
             // Alert for successful update and reset the form.
             alert(`Stock Market operational Times, Days, and Holidays have been modified!`);
