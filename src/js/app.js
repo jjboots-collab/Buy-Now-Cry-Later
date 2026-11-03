@@ -11,13 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     accountLogin();
     logout();
     // RNG();
+	stocks();
 
     // Run if html calls it.
     if (document.getElementById('portfolioTable')) {
         dashboardData();
         cashAccount();
-        portfolio();
-        stocks();
+        portfolio();        
     }
 
     // // Run if html calls it.
