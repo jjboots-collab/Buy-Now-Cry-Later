@@ -246,10 +246,10 @@ function dashboardData() {
     })();
 	
 		// Load portfolio data.
-	    portfolio();
+	    //portfolio();
 	
 		// Load Transaction data.
-		transactionHistory()
+		//transactionHistory()
 }
 
 // CREATE STOCK
