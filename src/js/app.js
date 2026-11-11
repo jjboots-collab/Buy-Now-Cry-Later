@@ -194,7 +194,7 @@ function accountLogin() {
     });
 }
 
-// DASHBOARD DATA INITIALIZATION (cash, transaction, and portfolio)
+// DASHBOARD DATA INITIALIZATION
 function dashboardData() {
     // Check connection to the DB.
     if (!supabaseClient) {
