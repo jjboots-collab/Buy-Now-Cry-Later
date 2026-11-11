@@ -222,11 +222,12 @@ function dashboardData() {
                 throw error;
             }
 			
-            // Add cash balance to the dashboard.
-            if (result && result.success !== false) {             
+            // Add formatted cash balance to the dashboard.
+			if (result && result.success !== false) {             
                 const balanceElement = document.getElementById('userCashDisplay');
                 if (balanceElement) {
-                    balanceElement.textContent = `$${parseFloat(result.cash_balance).toFixed(2)}`;
+                    const numericCash = parseFloat(result.cash_balance);
+                    balanceElement.textContent = `$${numericCash.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
                 }
             }
         }
