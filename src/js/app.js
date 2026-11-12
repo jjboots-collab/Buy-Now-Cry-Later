@@ -57,6 +57,9 @@ function createUserAccount() {
 
             // Display success message.
             alert('Account created successfully! Please log in!');
+			
+			// Reload the page/clear entries.
+			location.reload();
         }
         // Catch and display errors.
         catch (err) {
