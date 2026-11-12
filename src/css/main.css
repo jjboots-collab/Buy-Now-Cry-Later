@@ -45,8 +45,8 @@ header h2 {
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-width: 100px;
-    min-height: 90px;
+    min-width: 75px;
+    min-height: 60px;
     padding: 10px 14px;
     background: #c2e0ff;
     color: #000;
