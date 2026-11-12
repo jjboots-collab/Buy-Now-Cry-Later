@@ -15,6 +15,7 @@ body {
 /* ===== Header and nav ===== */
 header {
     display: flex;
+    font-size: 10.75rem;
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
