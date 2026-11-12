@@ -66,6 +66,10 @@ header h2 {
     background: #8ec5ff;
 }
 
+.nav-btn.nav-btn-alt:hover {
+    background: #ffc85c;
+}
+
 /* ===== Main content ===== */
 main {
     max-width: 1100px;
