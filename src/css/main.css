@@ -45,12 +45,12 @@ header h2 {
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-width: 100px;
-    min-height: 90px;
+    min-width: 75px;
+    min-height: 60px;
     padding: 10px 14px;
     background: #c2e0ff;
     color: #000;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: bold;
     text-decoration: none;
     border-radius: 10px;
@@ -64,6 +64,10 @@ header h2 {
 
 .nav-btn.active {
     background: #8ec5ff;
+}
+
+.nav-btn.nav-btn-alt:hover {
+    background: #ffc85c;
 }
 
 /* ===== Main content ===== */
